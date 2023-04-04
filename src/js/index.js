@@ -33,3 +33,9 @@ ipcRenderer.on('send-H', () => {
     ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
 })
 
+// nextBtn.addEventListener('contextmenu', (e) => {
+//     console.log('asd')
+//     e.preventDefault()
+//     ipcRenderer.send('show-context-menu')
+    
+// })

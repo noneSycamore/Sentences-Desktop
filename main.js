@@ -7,8 +7,10 @@ Store.initRenderer()
 const store = new Store();
 const exeName = path.basename(process.execPath)
 const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
+const WM_INITMENU = 0x0116;
 
 // 初始化
+let DefaultRightClickData = { a: false, b: false, c: false, d: true, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }
 init()
 
 
@@ -42,11 +44,13 @@ app.on('window-all-closed', () => {
 //  * -Other                                            //
 //  * --ifMinimize                                      //
 //  * --iFOpenAtStart                                   //
+//  * -RightClick                                       //
 //////////////////////////////////////////////////////////
 function createWindow () {
     // 初始化
     let childWin = null
     let tray = null
+    rightClickMenu = createRightClickMenu()
     // 主窗口
     const mainWindow = new BrowserWindow({
         width: userW,
@@ -78,10 +82,12 @@ function createWindow () {
             createTray()
         }
     })
+
     // 关闭主窗口事件(隐藏)
     mainWindow.on('close', (e) => {
         e.preventDefault();
         mainWindow.hide()
+        console.log(mainWindow.eventNames())
     })
     // 主窗口大小改变事件
     mainWindow.on('resized', () => {
@@ -112,6 +118,12 @@ function createWindow () {
             store.set('Appearance.SaveXYWH.H', arg[0])
         }
     })
+    // 右键菜单设置
+    mainWindow.hookWindowMessage(WM_INITMENU, () => {
+        mainWindow.setEnabled(false);
+        mainWindow.setEnabled(true);
+        rightClickMenu.popup();
+    });
 
 
     // 设置窗口
@@ -141,6 +153,11 @@ function createWindow () {
         childWin.on('closed', () => {
             childWin = null
         })
+        // 右键菜单设置
+        childWin.hookWindowMessage(WM_INITMENU, () => {
+            childWin.setEnabled(false);
+            childWin.setEnabled(true);
+        });
     }
     // 打开设置界面
     function openSetting () {
@@ -262,6 +279,143 @@ function createWindow () {
             tray.popUpContextMenu(trayContextMenu)
         })
     }
+    function createRightClickMenu () {
+        var tmpRightClickData = store.get('RightClick')
+        var rightClickMenu = Menu.buildFromTemplate([
+        {
+            label: '动画',
+            type: 'checkbox',
+            checked: tmpRightClickData.a,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                tmpRightClickData.a = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '漫画',
+            type: 'checkbox',
+            checked: tmpRightClickData.b,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.b = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '游戏',
+            type: 'checkbox',
+            checked: tmpRightClickData.c,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.c = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '文学',
+            type: 'checkbox',
+            checked: tmpRightClickData.d,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.d = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '原创',
+            type: 'checkbox',
+            checked: tmpRightClickData.e,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.e = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '来自网络',
+            type: 'checkbox',
+            checked: tmpRightClickData.f,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.f = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+            },
+        {
+            label: '其他',
+            type: 'checkbox',
+            checked: tmpRightClickData.g,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.g = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '影视',
+            type: 'checkbox',
+            checked: tmpRightClickData.h,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.h = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '诗词',
+            type: 'checkbox',
+            checked: tmpRightClickData.i,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.i = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '网易云',
+            type: 'checkbox',
+            checked: tmpRightClickData.j,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.j = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        {
+            label: '哲学',
+            type: 'checkbox',
+            checked: tmpRightClickData.k,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.k = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+            },
+        {
+            label: '抖机灵',
+            type: 'checkbox',
+            checked: tmpRightClickData.l,
+            click: function (menuItem, event) {
+                menuItem.checked = !menuItem.checked;
+                var tmpRightClickData = store.get('RightClick')
+                tmpRightClickData.l = menuItem.checked
+                store.set('RightClick', tmpRightClickData)
+            }
+        },
+        ])
+        return rightClickMenu
+    }
     // 保存窗口位置
     function ifSaveXYWH () {
         const flagXYWH = store.get('Appearance.SaveXYWH.isSave');
@@ -321,6 +475,9 @@ function init () {
     if (!store.has('Other.ifOpenAtStart')) {
         store.set('Other.ifOpenAtStart', store.get('Preferences.Other.ifOpenAtStart'))
     }
+    if (!store.has('RightClick')) {
+        store.set('RightClick', store.get('Preferences.RightClick'))
+    }
     iconPath = path.join(__dirname, '/src/icons/hitokoto.ico');
 
 }
@@ -347,6 +504,9 @@ function loadPreferences () {
     }
     if (!store.has('Other.ifOpenAtStart')) {
         store.set('Preferences.Other.ifOpenAtStart', true)
+    }
+    if (!store.has('RightClick')) {
+        store.set('Preferences.RightClick', DefaultRightClickData)
     }
 }
 //设置是否开机启动

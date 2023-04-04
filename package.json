@@ -50,16 +50,16 @@
     "nsis": {
         "oneClick": false,
         "allowToChangeInstallationDirectory": true,
-        "installerIcon": "./build/icons/win/icon.ico",
+        "installerIcon": "./build/icons/win/hitokoto.ico",
         "installerHeader": "./build/icons/win/icon.bmp",
-        "uninstallerIcon": "./build/icons/win/icon.ico",
+        "uninstallerIcon": "./build/icons/win/hitokoto.ico",
         "perMachine": true,
         "createDesktopShortcut": true,
         "createStartMenuShortcut": true,
         "license": "./src/license/license.txt"
     },
     "win": {
-        "icon": "./build/icons/win/icon.ico",
+        "icon": "./build/icons/win/hitokoto.ico",
         "target": [
             {
                 "target": "nsis",
