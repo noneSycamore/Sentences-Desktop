@@ -1,0 +1,121 @@
+{
+  "id": "3985084",
+  "name": "Hitokoto-Desktop",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "579060",
+      "name": "iconfont-iconfontsetting",
+      "font_class": "iconfonticonfontsetting",
+      "unicode": "e735",
+      "unicode_decimal": 59189
+    },
+    {
+      "icon_id": "749800",
+      "name": "iconfont-youhuiquan",
+      "font_class": "iconfontyouhuiquan",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "1389605",
+      "name": "color",
+      "font_class": "color",
+      "unicode": "e760",
+      "unicode_decimal": 59232
+    },
+    {
+      "icon_id": "7735974",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e8db",
+      "unicode_decimal": 59611
+    },
+    {
+      "icon_id": "5452542",
+      "name": "heart",
+      "font_class": "heart",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "5589054",
+      "name": "heart",
+      "font_class": "heart1",
+      "unicode": "e637",
+      "unicode_decimal": 58935
+    },
+    {
+      "icon_id": "18519008",
+      "name": "Heart",
+      "font_class": "Heart",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "4503710",
+      "name": "right",
+      "font_class": "right3",
+      "unicode": "e6dd",
+      "unicode_decimal": 59101
+    },
+    {
+      "icon_id": "6151385",
+      "name": "caret-right",
+      "font_class": "caret-right",
+      "unicode": "e845",
+      "unicode_decimal": 59461
+    },
+    {
+      "icon_id": "6598342",
+      "name": "caret-right",
+      "font_class": "caret-right1",
+      "unicode": "e8ec",
+      "unicode_decimal": 59628
+    },
+    {
+      "icon_id": "1080342",
+      "name": "right",
+      "font_class": "right",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "1393753",
+      "name": "right",
+      "font_class": "right1",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "3889125",
+      "name": "right",
+      "font_class": "right2",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    },
+    {
+      "icon_id": "5466080",
+      "name": "setting",
+      "font_class": "setting",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
+    },
+    {
+      "icon_id": "8326703",
+      "name": "Setting",
+      "font_class": "Setting",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "15066955",
+      "name": "setting",
+      "font_class": "setting1",
+      "unicode": "e6b2",
+      "unicode_decimal": 59058
+    }
+  ]
+}

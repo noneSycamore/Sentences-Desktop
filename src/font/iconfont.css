@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3985084 */
+  src: url('iconfont.woff2?t=1680236658718') format('woff2'),
+       url('iconfont.woff?t=1680236658718') format('woff'),
+       url('iconfont.ttf?t=1680236658718') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-iconfonticonfontsetting:before {
+  content: "\e735";
+}
+
+.icon-iconfontyouhuiquan:before {
+  content: "\e627";
+}
+
+.icon-color:before {
+  content: "\e760";
+}
+
+.icon-close:before {
+  content: "\e8db";
+}
+
+.icon-heart:before {
+  content: "\e62b";
+}
+
+.icon-heart1:before {
+  content: "\e637";
+}
+
+.icon-Heart:before {
+  content: "\e63f";
+}
+
+.icon-right3:before {
+  content: "\e6dd";
+}
+
+.icon-caret-right:before {
+  content: "\e845";
+}
+
+.icon-caret-right1:before {
+  content: "\e8ec";
+}
+
+.icon-right:before {
+  content: "\e613";
+}
+
+.icon-right1:before {
+  content: "\e71c";
+}
+
+.icon-right2:before {
+  content: "\e667";
+}
+
+.icon-setting:before {
+  content: "\e72c";
+}
+
+.icon-Setting:before {
+  content: "\e64e";
+}
+
+.icon-setting1:before {
+  content: "\e6b2";
+}
+

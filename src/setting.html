@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置</title>
+    <link rel="stylesheet" type="text/css" href="./css/setting.css">
+    <link rel="stylesheet" href="./font/iconfont.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="Title">设置</div>
+        <div class="nav-text">
+            <div class="item tab-manage nav-active enable-click">
+                <div class="bars">
+                    <span class="icons iconfont icon-color"></span>外观
+                </div>
+            </div>
+            <div class="item tab-manage enable-click">
+                <div class="bars">
+                    <span class="icons iconfont icon-iconfontyouhuiquan"></span>其他
+                </div>
+            </div>
+            <div class="item tab-manage enable-click">
+                <div class="bars">
+                    <span class="icons iconfont icon-heart1"></span>关于
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="content">
+        <span class="close enable-click">
+            <span class="icons iconfont icon-close" style="font-size: 26px;"></span>
+        </span>
+        <div class="content-manage content-active">
+            <h1>一言界面外观</h1>
+            <ul class="settings">
+                <div class="setting-item">
+                    保留主窗口关闭时的位置和大小
+                    <div id="btn-xywh" class="btn enable-click" onclick="on_off_XYWH()"></div>
+                </div>
+                <div class="xywh-manage">
+                    <a class="xyValue">位置： &emsp;&emsp;&emsp;&emsp;</a>
+                </div>
+                <div class="xywh-manage">
+                    <a class="whValue">大小： &emsp;&emsp;&emsp;&emsp;</a>
+                </div>
+                <div class="setting-item">
+                    透明度
+                    <div style="display: flex; align-items: center;">
+                        <span id="Transparency-value" style="padding-right: 25px;"></span>
+                        <div id="range-control">
+                            <input class="enable-click" type="range" id="Transparency"  min="0" max="100" step="1"
+                            oninput="changeTransparency()" onchange="changeTransparency()">
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    边角弧度
+                    <div style="display: flex; align-items: center;">
+                        <span id="Curvature-value" style="padding-right: 25px;"></span>
+                        <div id="range-control">
+                            <input class="enable-click" type="range" id="Curvature" min="0" max="10" step="1"
+                                oninput="changeCurvature()" onchange="changeCurvature()">
+                        </div>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div class="content-manage">
+            <h1>其他设置</h1>
+            <ul class="settings">
+                <div class="setting-item">
+                    最小化到托盘（关闭则无托盘）
+                    <div id="btn-minimize" class="btn enable-click" onclick="on_off_Minimize()"></div>
+                </div>
+            </ul>
+        </div>
+        <div class="content-manage">
+            <h1>新建任务</h1>
+
+        </div>
+    </div>
+</body>
+<script src="./js/setting.js"></script>
+
+</html>
