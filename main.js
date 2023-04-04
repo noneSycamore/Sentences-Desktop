@@ -5,6 +5,11 @@ const Store = require('electron-store');
 const { config } = require('process');
 Store.initRenderer()
 const store = new Store();
+const exeName = path.basename(process.execPath)
+
+// 初始化
+init()
+
 
 app.whenReady().then(() => {
     // 渲染窗口
@@ -20,6 +25,11 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin')
         app.quit()
 })
+//设置开机启动
+app.setLoginItemSettings({
+    openAtLogin: true,
+    args: ['--processStart', `"${exeName}"`],
+});
 
 /**  首选项设置保存
  * Preferences
@@ -33,10 +43,12 @@ app.on('window-all-closed', () => {
  * --Curvature
  * ---value
  * ---percent
+ * -Other
+ * --ifMinimize
+ * 
 **/ 
 function createWindow () {
     // 初始化
-    init()
     let childWin = null
     let tray = null
     // 主窗口
@@ -74,8 +86,6 @@ function createWindow () {
     mainWindow.on('close', (e) => {
         e.preventDefault();
         mainWindow.hide()
-        // console.log(ipcMain.eventNames());
-        // console.log(mainWindow.eventNames());
     })
     // 主窗口大小改变事件
     mainWindow.on('resized', () => {
@@ -107,60 +117,7 @@ function createWindow () {
         }
     })
 
-    // 初始化
-    function init () {
-        loadPreferences()
-        if (store.has('Appearance.SaveXYWH.isSave')) {
-            userW = store.get('Appearance.SaveXYWH.W')
-            userH = store.get('Appearance.SaveXYWH.H')
-            userX = store.get('Appearance.SaveXYWH.X')
-            userY = store.get('Appearance.SaveXYWH.Y')
-        }
-        else {
-            store.set('Appearance.SaveXYWH.isSave', store.get('Preferences.Appearance.SaveXYWH.isSaveXYWH'))
-            userW = store.get('Preferences.Appearance.SaveXYWH.defaultW')
-            userH = store.get('Preferences.Appearance.SaveXYWH.defaultH')
-            userX = store.get('Preferences.Appearance.SaveXYWH.defaultX')
-            userY = store.get('Preferences.Appearance.SaveXYWH.defaultY')
-        }
-        if (!store.has('Appearance.Transparency.value')) {
-            store.set('Appearance.Transparency.value', store.get('Preferences.Appearance.Transparency.value'))
-            store.set('Appearance.Transparency.percent', store.get('Preferences.Appearance.Transparency.percent'))
-        }
-        userTransparency = store.get('Appearance.Transparency.value') / 100
-        if (!store.has('Appearance.Curvature.value')) {
-            store.set('Appearance.Curvature.value', store.get('Preferences.Appearance.Curvature.value'))
-            store.set('Appearance.Curvature.percent', store.get('Preferences.Appearance.Curvature.percent'))
-        }
-        userCurvature = store.get('Appearance.Curvature.value') * 6
-        if (!store.has('Other.ifMinimize')) {
-            store.set('Other.ifMinimize', store.get('Preferences.Other.ifMinimize'))
-        }
-        iconPath = path.join(__dirname, '/src/icons/icon.ico');
 
-    }
-    // 首选项
-    function loadPreferences () {
-        if (!store.has('Preferences.Appearance.SaveXYWH.isSaveXYWH')) {
-            store.set('Preferences.Appearance.SaveXYWH.isSaveXYWH', true)
-            store.set('Preferences.Appearance.SaveXYWH.defaultW', 600)
-            store.set('Preferences.Appearance.SaveXYWH.defaultH', 300)
-            let size = screen.getPrimaryDisplay().workAreaSize
-            store.set('Preferences.Appearance.SaveXYWH.defaultX', parseInt(size.width * 0.5) - 300)
-            store.set('Preferences.Appearance.SaveXYWH.defaultY', parseInt(size.height * 0.5) - 150)
-        }
-        if (!store.has('Preferences.Appearance.Transparency.value')) {
-            store.set('Preferences.Appearance.Transparency.value', 50)
-            store.set('Preferences.Appearance.Transparency.percent', 50)
-        }
-        if (!store.has('Preferences.Appearance.Curvature.value')) {
-            store.set('Preferences.Appearance.Curvature.value', 0)
-            store.set('Preferences.Appearance.Curvature.percent', 0)
-        }
-        if (!store.has('Other.ifMinimize')) {
-            store.set('Preferences.Other.ifMinimize', true)
-        }
-    }
     // 设置窗口
     function createSetting () {
         if (childWin) {
@@ -333,5 +290,59 @@ function createWindow () {
     // 更改主边角弧度
     function changeCurvature (userCurvature) {
         mainWindow.webContents.executeJavaScript(`allItems.style.borderRadius = "${userCurvature}px";`)
+    }
+}
+// 初始化
+function init () {
+    loadPreferences()
+    if (store.has('Appearance.SaveXYWH.isSave')) {
+        userW = store.get('Appearance.SaveXYWH.W')
+        userH = store.get('Appearance.SaveXYWH.H')
+        userX = store.get('Appearance.SaveXYWH.X')
+        userY = store.get('Appearance.SaveXYWH.Y')
+    }
+    else {
+        store.set('Appearance.SaveXYWH.isSave', store.get('Preferences.Appearance.SaveXYWH.isSaveXYWH'))
+        userW = store.get('Preferences.Appearance.SaveXYWH.defaultW')
+        userH = store.get('Preferences.Appearance.SaveXYWH.defaultH')
+        userX = store.get('Preferences.Appearance.SaveXYWH.defaultX')
+        userY = store.get('Preferences.Appearance.SaveXYWH.defaultY')
+    }
+    if (!store.has('Appearance.Transparency.value')) {
+        store.set('Appearance.Transparency.value', store.get('Preferences.Appearance.Transparency.value'))
+        store.set('Appearance.Transparency.percent', store.get('Preferences.Appearance.Transparency.percent'))
+    }
+    userTransparency = store.get('Appearance.Transparency.value') / 100
+    if (!store.has('Appearance.Curvature.value')) {
+        store.set('Appearance.Curvature.value', store.get('Preferences.Appearance.Curvature.value'))
+        store.set('Appearance.Curvature.percent', store.get('Preferences.Appearance.Curvature.percent'))
+    }
+    userCurvature = store.get('Appearance.Curvature.value') * 6
+    if (!store.has('Other.ifMinimize')) {
+        store.set('Other.ifMinimize', store.get('Preferences.Other.ifMinimize'))
+    }
+    iconPath = path.join(__dirname, '/src/icons/icon.ico');
+
+}
+// 首选项
+function loadPreferences () {
+    if (!store.has('Preferences.Appearance.SaveXYWH.isSaveXYWH')) {
+        store.set('Preferences.Appearance.SaveXYWH.isSaveXYWH', true)
+        store.set('Preferences.Appearance.SaveXYWH.defaultW', 600)
+        store.set('Preferences.Appearance.SaveXYWH.defaultH', 300)
+        let size = screen.getPrimaryDisplay().workAreaSize
+        store.set('Preferences.Appearance.SaveXYWH.defaultX', parseInt(size.width * 0.5) - 300)
+        store.set('Preferences.Appearance.SaveXYWH.defaultY', parseInt(size.height * 0.5) - 150)
+    }
+    if (!store.has('Preferences.Appearance.Transparency.value')) {
+        store.set('Preferences.Appearance.Transparency.value', 50)
+        store.set('Preferences.Appearance.Transparency.percent', 50)
+    }
+    if (!store.has('Preferences.Appearance.Curvature.value')) {
+        store.set('Preferences.Appearance.Curvature.value', 0)
+        store.set('Preferences.Appearance.Curvature.percent', 0)
+    }
+    if (!store.has('Other.ifMinimize')) {
+        store.set('Preferences.Other.ifMinimize', true)
     }
 }
