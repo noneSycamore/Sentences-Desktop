@@ -8,23 +8,25 @@ const btnXYWH = document.getElementById('btn-xywh')
 const transparency = document.getElementById('Transparency')
 const curvature = document.getElementById('Curvature')
 const btnMinimize = document.getElementById('btn-minimize')
+const btnOpenAtStart = document.getElementById('btn-openAtStart')
 
 const Store = require('electron-store');
 const store = new Store();
 //////////////////////////////////////////////////////////
 //                 Setting Data Structure               //
-//  Appearance
-//  -SaveXYWH
-//  --isSave
-//  --X/Y/W/H
-//  -Transparency
-//  --value
-//  --percent
-//  -Curvature
-//  --value
-//  --percent
-//  Other
-//  -ifMinimize
+//  Appearance                                          //
+//  -SaveXYWH                                           //
+//  --isSave                                            //
+//  --X/Y/W/H                                           //
+//  -Transparency                                       //
+//  --value                                             //
+//  --percent                                           //
+//  -Curvature                                          //
+//  --value                                             //
+//  --percent                                           //
+//  Other                                               //
+//  -ifMinimize                                         //
+//  -ifOpenAtStart                                      //
 //////////////////////////////////////////////////////////
 
 //初始化显示窗口
@@ -32,6 +34,7 @@ initIfSaveXYWH()
 initTransparency()
 initCurvature()
 initIfMinimize()
+initIfOpenAtStart()
 
 //绑定事件
 tabManage.forEach((el,index) => {
@@ -119,6 +122,16 @@ function initIfMinimize () {
         btnOffMinimize()
     }
 }
+// 初始化 - 开机自启动 - openAtStart
+function initIfOpenAtStart () {
+    var ifOpenAtStart = store.get('Other.ifOpenAtStart')
+    if (ifOpenAtStart) {
+        btnOnOpenAtStart()
+    }
+    else {
+        btnOffOpenAtStart()
+    }
+}
 // 滑动按钮控制 - XYWH
 function on_off_XYWH(){
     var text = btnXYWH.children[1];
@@ -148,7 +161,7 @@ function changeCurvature () {
     changeSliders(curvature, objPercent, 'Curvature-value')
     ipcRenderer.send('curvature-changed',[objVal, objPercent])
 }
-// 滑动按钮控制 - XYWH
+// 滑动按钮控制 - Minimize
 function on_off_Minimize(){
     var text = btnMinimize.children[1];
     if(text.innerText==="ON"){
@@ -158,6 +171,15 @@ function on_off_Minimize(){
     }
     // 发送变动数据
     ipcRenderer.send('btn-changed-minimize')
+}
+// 滑动按钮控制 - OpenAtStart
+function on_off_OpenAtStart(){
+    var text = btnOpenAtStart.children[1];
+    if(text.innerText==="ON"){
+        btnOffOpenAtStart()
+    } else {
+        btnOnOpenAtStart()
+    }
 }
 // 滑动按钮打开 - XYWH
 function btnOnXYWH () {
@@ -192,6 +214,18 @@ function btnOffMinimize () {
     btnOff(btnMinimize)
     // 数据存储
     store.set('Other.ifMinimize', false);
+}
+// 滑动按钮打开 - OpenAtStart
+function btnOnOpenAtStart () {
+    btnOn(btnOpenAtStart)
+    // 数据存储
+    store.set('Other.ifOpenAtStart', true);
+}
+// 滑动按钮关闭 - OpenAtStart
+function btnOffOpenAtStart () {
+    btnOff(btnOpenAtStart)
+    // 数据存储
+    store.set('Other.ifOpenAtStart', false);
 }
 
 // 显示窗口数据 - XYWH

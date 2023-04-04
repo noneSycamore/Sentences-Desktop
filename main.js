@@ -6,6 +6,7 @@ const { config } = require('process');
 Store.initRenderer()
 const store = new Store();
 const exeName = path.basename(process.execPath)
+const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
 
 // 初始化
 init()
@@ -25,28 +26,23 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin')
         app.quit()
 })
-//设置开机启动
-app.setLoginItemSettings({
-    openAtLogin: true,
-    args: ['--processStart', `"${exeName}"`],
-});
-
-/**  首选项设置保存
- * Preferences
- * -Appearance
- * --SaveXYWH
- * ---isSaveXYWH
- * ---X/Y/W/H
- * --Transparency
- * ---value
- * ---percent
- * --Curvature
- * ---value
- * ---percent
- * -Other
- * --ifMinimize
- * 
-**/ 
+//////////////////////////////////////////////////////////
+//                      首选项设置保存                    //
+//  * Preferences                                       //
+//  * -Appearance                                       //
+//  * --SaveXYWH                                        //
+//  * ---isSaveXYWH                                     //
+//  * ---X/Y/W/H                                        //
+//  * --Transparency                                    //
+//  * ---value                                          //
+//  * ---percent                                        //
+//  * --Curvature                                       //
+//  * ---value                                          //
+//  * ---percent                                        //
+//  * -Other                                            //
+//  * --ifMinimize                                      //
+//  * --iFOpenAtStart                                   //
+//////////////////////////////////////////////////////////
 function createWindow () {
     // 初始化
     let childWin = null
@@ -159,7 +155,7 @@ function createWindow () {
             childWin.webContents.send('xy', mainWindow.getPosition())
         }
         ifOpenListener()
-        ifMinimizeListener()
+
         // 记录开始按钮发生变更
         ipcMain.on('btn-changed-xywh', () => {
             ifOpenListener()
@@ -254,6 +250,7 @@ function createWindow () {
             label: '退出',
             click: () => {
                 ifSaveXYWH()
+                setIFOpenAtStart()
                 app.exit()
             }
         }
@@ -321,7 +318,10 @@ function init () {
     if (!store.has('Other.ifMinimize')) {
         store.set('Other.ifMinimize', store.get('Preferences.Other.ifMinimize'))
     }
-    iconPath = path.join(__dirname, '/src/icons/icon.ico');
+    if (!store.has('Other.ifOpenAtStart')) {
+        store.set('Other.ifOpenAtStart', store.get('Preferences.Other.ifOpenAtStart'))
+    }
+    iconPath = path.join(__dirname, '/src/icons/hitokoto.ico');
 
 }
 // 首选项
@@ -345,4 +345,24 @@ function loadPreferences () {
     if (!store.has('Other.ifMinimize')) {
         store.set('Preferences.Other.ifMinimize', true)
     }
+    if (!store.has('Other.ifOpenAtStart')) {
+        store.set('Preferences.Other.ifOpenAtStart', true)
+    }
 }
+//设置是否开机启动
+function setIFOpenAtStart () {
+    if (store.get('Other.ifOpenAtStart')) {
+        app.setLoginItemSettings({
+            openAtLogin: true,
+            path:appPath,
+            args: ['--processStart', `"${exeName}"`],
+        });
+    }
+    else {
+        app.setLoginItemSettings({
+            openAtLogin: false,
+            path:appPath,
+        });
+    }
+}
+
