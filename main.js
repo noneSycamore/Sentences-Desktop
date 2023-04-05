@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen, Menu, Tray } = require('electron')
+const { app, BrowserWindow, ipcMain, screen, Menu, MenuItem, Tray } = require('electron')
 const path = require('path')
 const { webContents } = require('electron')
 const Store = require('electron-store');
@@ -10,11 +10,11 @@ const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath
 const WM_INITMENU = 0x0116;
 
 // 初始化
-let DefaultRightClickData = { a: false, b: false, c: false, d: true, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }
-init()
+let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }
 
 
 app.whenReady().then(() => {
+    init()
     // 渲染窗口
     createWindow()
 
@@ -30,27 +30,37 @@ app.on('window-all-closed', () => {
 })
 //////////////////////////////////////////////////////////
 //                      首选项设置保存                    //
-//  * Preferences                                       //
-//  * -Appearance                                       //
-//  * --SaveXYWH                                        //
-//  * ---isSaveXYWH                                     //
-//  * ---X/Y/W/H                                        //
-//  * --Transparency                                    //
-//  * ---value                                          //
-//  * ---percent                                        //
-//  * --Curvature                                       //
-//  * ---value                                          //
-//  * ---percent                                        //
-//  * -Other                                            //
-//  * --ifMinimize                                      //
-//  * --iFOpenAtStart                                   //
-//  * -RightClick                                       //
+//  Preferences                                         //
+//  -Appearance                                         //
+//  --SaveXYWH                                          //
+//  ---isSaveXYWH                                       //
+//  ---X/Y/W/H                                          //
+//  --Transparency                                      //
+//  ---value                                            //
+//  ---percent                                          //
+//  --Curvature                                         //
+//  ---value                                            //
+//  ---percent                                          //
+//  --FontSize                                          //
+//  ---isSetSize                                        //
+//  ---fontSizeTitle                                    //
+//  ----value                                           //
+//  ----percent                                         //
+//  ---fontSizeText                                     //
+//  ----value                                           //
+//  ----percent                                         //
+//  ---fontSizeFrom                                     //
+//  ----value                                           //
+//  ----percent                                         //
+//  -Other                                              //
+//  --ifMinimize                                        //
+//  --iFOpenAtStart                                     //
+//  -RightClick                                         //
 //////////////////////////////////////////////////////////
 function createWindow () {
     // 初始化
     let childWin = null
     let tray = null
-    rightClickMenu = createRightClickMenu()
     // 主窗口
     const mainWindow = new BrowserWindow({
         width: userW,
@@ -75,56 +85,25 @@ function createWindow () {
     mainWindow.setFullScreenable(false);
     // 主窗口准备好后显示
     mainWindow.once('ready-to-show', () => {
+        mainWindow.webContents.send('hitokoto')
         changeTransparency(userTransparency)
         changeCurvature(userCurvature)
-        mainWindow.show()
+        changeFontSizeTitle(userFontSizeTitle)
+        changeFontSizeText(userFontSizeText)
+        changeFontSizeFrom(userFontSizeFrom)
+        openListenerWhenShow()
         if (store.get('Preferences.Other.ifMinimize')) {
             createTray()
         }
-    })
-
-    // 关闭主窗口事件(隐藏)
-    mainWindow.on('close', (e) => {
-        e.preventDefault();
-        mainWindow.hide()
-        console.log(mainWindow.eventNames())
-    })
-    // 主窗口大小改变事件
-    mainWindow.on('resized', () => {
-        mainWindow.webContents.send('send-H')
-    })
-
-    // 打开设置窗口
-    ipcMain.on('openSetting', () => {
-        openSetting()
-    })
-    // 刷新页面，获取下一个一言
-    ipcMain.on('next', () => {
-        mainWindow.webContents.reload()
-        userTransparency = store.get('Appearance.Transparency.value') / 100
-        changeTransparency(userTransparency)
-        userCurvature = store.get('Appearance.Curvature.value') * 6
-        changeCurvature(userCurvature)
-    })
-    // 更改窗口大小
-    ipcMain.on('change-H', (event, arg) => {
-        if (arg[1]) {
-            mainWindow.setSize(arg[0], arg[1])
-            store.set('Appearance.SaveXYWH.W', arg[0])
-            store.set('Appearance.SaveXYWH.H', arg[1])
-        }
-        else {
-            mainWindow.setSize(store.get('Appearance.SaveXYWH.W'), arg[0])
-            store.set('Appearance.SaveXYWH.H', arg[0])
-        }
+        mainWindow.show()
     })
     // 右键菜单设置
     mainWindow.hookWindowMessage(WM_INITMENU, () => {
         mainWindow.setEnabled(false);
         mainWindow.setEnabled(true);
+        rightClickMenu = createRightClickMenu()
         rightClickMenu.popup();
     });
-
 
     // 设置窗口
     function createSetting () {
@@ -171,11 +150,12 @@ function createWindow () {
         const sendXY = () => {
             childWin.webContents.send('xy', mainWindow.getPosition())
         }
-        ifOpenListener()
+        ifOpenXYWHListener()
+        ifChangeFontSizeListener()
 
         // 记录开始按钮发生变更
         ipcMain.on('btn-changed-xywh', () => {
-            ifOpenListener()
+            ifOpenXYWHListener()
         })
         // 透明度滑动条发送变更
         ipcMain.on('transparency-changed', (event, arg) => {
@@ -184,6 +164,10 @@ function createWindow () {
         // 边角弧度滑动条发送变更
         ipcMain.on('curvature-changed', (event, arg) => {
             curvatureListener(arg[0], arg[1])
+        })
+        // 是否改变文字大小按钮发生变更
+        ipcMain.on('btn-changed-fontSize', () => {
+            ifChangeFontSizeListener()
         })
         // 是否最小化按钮发生变更
         ipcMain.on('btn-changed-minimize', () => {
@@ -199,10 +183,12 @@ function createWindow () {
             ipcMain.removeAllListeners('btn-changed-xywh')
             ipcMain.removeAllListeners('transparency-changed')
             ipcMain.removeAllListeners('curvature-changed')
+            ipcMain.removeAllListeners('btn-changed-fontSize')
+            ipcMain.removeAllListeners('btn-changed-minimize')
             ipcMain.removeAllListeners('setting:close')
         })
         // 函数：开启/关闭对主窗口变化的监听
-        function ifOpenListener () {
+        function ifOpenXYWHListener () {
             if (store.get('Appearance.SaveXYWH.isSave')) {
                 // 如果按钮打开，先发送一次数据，否则显示空白
                 childWin.webContents.send('wh', mainWindow.getSize())
@@ -228,6 +214,46 @@ function createWindow () {
             store.set('Appearance.Curvature.percent', percent);
             userCurvature = store.get('Appearance.Curvature.value') * 6
             changeCurvature(userCurvature)
+        }
+        // 函数：标题文字大小变化
+        function fontSizeTitleListener (value, percent) {
+            store.set('Appearance.FontSize.fontSizeTitle.value', value);
+            store.set('Appearance.FontSize.fontSizeTitle.percent', percent);
+            userFontSizeTitle = store.get('Appearance.FontSize.fontSizeTitle.value')
+            changeFontSizeTitle(userFontSizeTitle)
+        }
+        // 函数：主体文字大小变化
+        function fontSizeTextListener (value, percent) {
+            store.set('Appearance.FontSize.fontSizeText.value', value);
+            store.set('Appearance.FontSize.fontSizeText.percent', percent);
+            userFontSizeText = store.get('Appearance.FontSize.fontSizeText.value')
+            changeFontSizeText(userFontSizeText)
+        }
+        // 函数：来源文字大小变化
+        function fontSizeFromListener (value, percent) {
+            store.set('Appearance.FontSize.fontSizeFrom.value', value);
+            store.set('Appearance.FontSize.fontSizeFrom.percent', percent);
+            userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
+            changeFontSizeFrom(userFontSizeFrom)
+        }
+        // 函数：开启/关闭对文字大小改变滑动条的监听
+        function ifChangeFontSizeListener () {
+            if (store.get('Appearance.FontSize.isSetSize')) { 
+                ipcMain.on('fontSizeTitle-changed', (event, arg) => {
+                    fontSizeTitleListener(arg[0], arg[1])
+                })
+                ipcMain.on('fontSizeText-changed', (event, arg) => {
+                    fontSizeTextListener(arg[0], arg[1])
+                })
+                ipcMain.on('fontSizeFrom-changed', (event, arg) => {
+                    fontSizeFromListener(arg[0], arg[1])
+                })
+            }
+            else {
+                ipcMain.removeAllListeners('fontSizeTitle-changed')
+                ipcMain.removeAllListeners('fontSizeText-changed')
+                ipcMain.removeAllListeners('fontSizeFrom-changed')
+            }
         }
         // 函数：开启/关闭对是否最小化到托盘的监听
         function ifMinimizeListener () {
@@ -257,7 +283,17 @@ function createWindow () {
         {
             label: '显示/隐藏',
             click: () => {
-                mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+                if (mainWindow.isVisible()) {
+                    mainWindow.hide()
+                    mainWindow.removeAllListeners('resized')
+                    ipcMain.removeAllListeners('openSetting')
+                    ipcMain.removeAllListeners('next')
+                    ipcMain.removeAllListeners('change-H')
+                }
+                else {
+                    openListenerWhenShow()
+                    mainWindow.show();
+                }
             }
         },
         {
@@ -273,12 +309,23 @@ function createWindow () {
         }
         ])
         tray.on('click', () => {
-            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+            if (mainWindow.isVisible()) {
+                mainWindow.hide()
+                mainWindow.removeAllListeners('resized')
+                ipcMain.removeAllListeners('openSetting')
+                ipcMain.removeAllListeners('next')
+                ipcMain.removeAllListeners('change-H')
+            }
+            else {
+                openListenerWhenShow()
+                mainWindow.show();
+            }
         })
         tray.on('right-click', () => {
             tray.popUpContextMenu(trayContextMenu)
         })
     }
+    // 创建右键菜单
     function createRightClickMenu () {
         var tmpRightClickData = store.get('RightClick')
         var rightClickMenu = Menu.buildFromTemplate([
@@ -287,7 +334,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.a,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
                 tmpRightClickData.a = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -297,8 +343,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.b,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.b = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -308,8 +352,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.c,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.c = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -319,8 +361,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.d,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.d = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -330,8 +370,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.e,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.e = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -341,8 +379,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.f,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.f = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -352,8 +388,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.g,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.g = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -363,8 +397,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.h,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.h = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -374,8 +406,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.i,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.i = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -385,8 +415,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.j,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.j = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -396,8 +424,6 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.k,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.k = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
@@ -407,14 +433,61 @@ function createWindow () {
             type: 'checkbox',
             checked: tmpRightClickData.l,
             click: function (menuItem, event) {
-                menuItem.checked = !menuItem.checked;
-                var tmpRightClickData = store.get('RightClick')
                 tmpRightClickData.l = menuItem.checked
                 store.set('RightClick', tmpRightClickData)
             }
         },
+        {
+            type: 'separator'
+            },
+        {
+            label: store.get('Other.ifMinimize') ? '最小化' : '退出',
+            id: 'changeExit',
+            click: () => {
+                if (store.get('Other.ifMinimize')) {
+                    mainWindow.hide()
+                    mainWindow.removeAllListeners('resized')
+                    ipcMain.removeAllListeners('openSetting')
+                    ipcMain.removeAllListeners('next')
+                    ipcMain.removeAllListeners('change-H')
+                }
+                else {
+                    ifSaveXYWH()
+                    setIFOpenAtStart()
+                    app.exit()
+                }
+            }
+        }
         ])
         return rightClickMenu
+    }
+    // 显示时开启监听
+    function openListenerWhenShow () {
+        // 主窗口大小改变事件
+        mainWindow.on('resized', () => {
+            mainWindow.webContents.send('send-H', 'WH')
+        })
+        
+        // 打开设置窗口
+        ipcMain.on('openSetting', () => {
+            openSetting()
+        })
+        // 刷新页面，获取下一个一言
+        ipcMain.on('next', () => {
+            mainWindow.webContents.send('hitokoto')
+        })
+        // 更改窗口大小
+        ipcMain.on('change-H', (event, arg) => {
+            if (arg[1] !== 'onlyH') {
+                mainWindow.setSize(arg[0], arg[1])
+                store.set('Appearance.SaveXYWH.W', arg[0])
+                store.set('Appearance.SaveXYWH.H', arg[1])
+            }
+            else {
+                mainWindow.setSize(store.get('Appearance.SaveXYWH.W'), arg[0])
+                store.set('Appearance.SaveXYWH.H', arg[0])
+            }
+        })
     }
     // 保存窗口位置
     function ifSaveXYWH () {
@@ -442,23 +515,33 @@ function createWindow () {
     function changeCurvature (userCurvature) {
         mainWindow.webContents.executeJavaScript(`allItems.style.borderRadius = "${userCurvature}px";`)
     }
+    function changeFontSizeTitle (userFontSizeTitle) {
+        mainWindow.webContents.executeJavaScript(`title_text.style.fontSize = "${userFontSizeTitle}px";`)
+        mainWindow.webContents.send('send-H', 'onlyH')
+    }
+    function changeFontSizeText (userFontSizeText) {
+        mainWindow.webContents.executeJavaScript(`hitokoto_text.style.fontSize = "${userFontSizeText}px";`)
+        mainWindow.webContents.send('send-H', 'onlyH')
+    }
+    function changeFontSizeFrom (userFontSizeFrom) {
+        mainWindow.webContents.executeJavaScript(`hitokoto_from.style.fontSize = "${userFontSizeFrom}px";`)
+        mainWindow.webContents.send('send-H', 'onlyH')
+    }
 }
 // 初始化
 function init () {
     loadPreferences()
-    if (store.has('Appearance.SaveXYWH.isSave')) {
-        userW = store.get('Appearance.SaveXYWH.W')
-        userH = store.get('Appearance.SaveXYWH.H')
-        userX = store.get('Appearance.SaveXYWH.X')
-        userY = store.get('Appearance.SaveXYWH.Y')
+    if (!store.has('Appearance.SaveXYWH.isSave')) {
+        store.set('Appearance.SaveXYWH.isSave', store.get('Preferences.Appearance.SaveXYWH.isSave'))
+        store.set('Appearance.SaveXYWH.W', store.get('Preferences.Appearance.SaveXYWH.W'))
+        store.set('Appearance.SaveXYWH.H', store.get('Preferences.Appearance.SaveXYWH.H'))
+        store.set('Appearance.SaveXYWH.X', store.get('Preferences.Appearance.SaveXYWH.X'))
+        store.set('Appearance.SaveXYWH.Y', store.get('Preferences.Appearance.SaveXYWH.Y'))
     }
-    else {
-        store.set('Appearance.SaveXYWH.isSave', store.get('Preferences.Appearance.SaveXYWH.isSaveXYWH'))
-        userW = store.get('Preferences.Appearance.SaveXYWH.defaultW')
-        userH = store.get('Preferences.Appearance.SaveXYWH.defaultH')
-        userX = store.get('Preferences.Appearance.SaveXYWH.defaultX')
-        userY = store.get('Preferences.Appearance.SaveXYWH.defaultY')
-    }
+    userW = store.get('Appearance.SaveXYWH.W')
+    userH = store.get('Appearance.SaveXYWH.H')
+    userX = store.get('Appearance.SaveXYWH.X')
+    userY = store.get('Appearance.SaveXYWH.Y')
     if (!store.has('Appearance.Transparency.value')) {
         store.set('Appearance.Transparency.value', store.get('Preferences.Appearance.Transparency.value'))
         store.set('Appearance.Transparency.percent', store.get('Preferences.Appearance.Transparency.percent'))
@@ -469,6 +552,18 @@ function init () {
         store.set('Appearance.Curvature.percent', store.get('Preferences.Appearance.Curvature.percent'))
     }
     userCurvature = store.get('Appearance.Curvature.value') * 6
+    if (!store.has('Appearance.FontSize.isSetSize')) {
+        store.set('Appearance.FontSize.isSetSize', store.get('Preferences.Appearance.FontSize.isSetSize'))
+        store.set('Appearance.FontSize.fontSizeTitle.value', store.get('Preferences.Appearance.FontSize.fontSizeTitle.value'))
+        store.set('Appearance.FontSize.fontSizeTitle.percent', store.get('Preferences.Appearance.FontSize.fontSizeTitle.percent'))
+        store.set('Appearance.FontSize.fontSizeText.value', store.get('Preferences.Appearance.FontSize.fontSizeText.value'))
+        store.set('Appearance.FontSize.fontSizeText.percent', store.get('Preferences.Appearance.FontSize.fontSizeText.percent'))
+        store.set('Appearance.FontSize.fontSizeFrom.value', store.get('Preferences.Appearance.FontSize.fontSizeFrom.value'))
+        store.set('Appearance.FontSize.fontSizeFrom.percent', store.get('Preferences.Appearance.FontSize.fontSizeFrom.percent'))
+    }
+    userFontSizeTitle = store.get('Appearance.FontSize.fontSizeTitle.value')
+    userFontSizeText = store.get('Appearance.FontSize.fontSizeText.value')
+    userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
     if (!store.has('Other.ifMinimize')) {
         store.set('Other.ifMinimize', store.get('Preferences.Other.ifMinimize'))
     }
@@ -483,13 +578,13 @@ function init () {
 }
 // 首选项
 function loadPreferences () {
-    if (!store.has('Preferences.Appearance.SaveXYWH.isSaveXYWH')) {
-        store.set('Preferences.Appearance.SaveXYWH.isSaveXYWH', true)
-        store.set('Preferences.Appearance.SaveXYWH.defaultW', 600)
-        store.set('Preferences.Appearance.SaveXYWH.defaultH', 300)
+    if (!store.has('Preferences.Appearance.SaveXYWH.isSave')) {
+        store.set('Preferences.Appearance.SaveXYWH.isSave', true)
+        store.set('Preferences.Appearance.SaveXYWH.W', 600)
+        store.set('Preferences.Appearance.SaveXYWH.H', 300)
         let size = screen.getPrimaryDisplay().workAreaSize
-        store.set('Preferences.Appearance.SaveXYWH.defaultX', parseInt(size.width * 0.5) - 300)
-        store.set('Preferences.Appearance.SaveXYWH.defaultY', parseInt(size.height * 0.5) - 150)
+        store.set('Preferences.Appearance.SaveXYWH.X', parseInt(size.width * 0.5) - 300)
+        store.set('Preferences.Appearance.SaveXYWH.Y', parseInt(size.height * 0.5) - 150)
     }
     if (!store.has('Preferences.Appearance.Transparency.value')) {
         store.set('Preferences.Appearance.Transparency.value', 50)
@@ -498,6 +593,15 @@ function loadPreferences () {
     if (!store.has('Preferences.Appearance.Curvature.value')) {
         store.set('Preferences.Appearance.Curvature.value', 0)
         store.set('Preferences.Appearance.Curvature.percent', 0)
+    }
+    if (!store.has('Preferences.Appearance.FontSize.isSetSize')) {
+        store.set('Preferences.Appearance.FontSize.isSetSize', false)
+        store.set('Preferences.Appearance.FontSize.fontSizeTitle.value', 28)
+        store.set('Preferences.Appearance.FontSize.fontSizeTitle.percent', 45)
+        store.set('Preferences.Appearance.FontSize.fontSizeText.value', 26)
+        store.set('Preferences.Appearance.FontSize.fontSizeText.percent', 40)
+        store.set('Preferences.Appearance.FontSize.fontSizeFrom.value', 18)
+        store.set('Preferences.Appearance.FontSize.fontSizeFrom.percent', 20)
     }
     if (!store.has('Other.ifMinimize')) {
         store.set('Preferences.Other.ifMinimize', true)

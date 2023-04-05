@@ -68,6 +68,40 @@
                         </div>
                     </div>
                 </div>
+                <div class="setting-item">
+                    文字大小
+                    <div id="btn-fontSize" class="btn enable-click" onclick="on_off_FontSize()"></div>
+                </div>
+                <div class="fontSize-manage">
+                    标题文字大小
+                    <div style="display: flex; align-items: center;">
+                        <span id="FontSizeTitle-value" style="padding-right: 25px;"></span>
+                        <div id="range-control">
+                            <input class="enable-click" type="range" id="FontSizeTitle" min="10" max="50" step="1"
+                                oninput="changeFontSizeTitle()" onchange="changeFontSizeTitle()">
+                        </div>
+                    </div>
+                </div>
+                <div class="fontSize-manage">
+                    一言文字大小
+                    <div style="display: flex; align-items: center;">
+                        <span id="FontSizeText-value" style="padding-right: 25px;"></span>
+                        <div id="range-control">
+                            <input class="enable-click" type="range" id="FontSizeText" min="10" max="50" step="1"
+                                oninput="changeFontSizeText()" onchange="changeFontSizeText()">
+                        </div>
+                    </div>
+                </div>
+                <div class="fontSize-manage">
+                    来源文字大小
+                    <div style="display: flex; align-items: center;">
+                        <span id="FontSizeFrom-value" style="padding-right: 25px;"></span>
+                        <div id="range-control">
+                            <input class="enable-click" type="range" id="FontSizeFrom" min="10" max="50" step="1"
+                                oninput="changeFontSizeFrom()" onchange="changeFontSizeFrom()">
+                        </div>
+                    </div>
+                </div>
             </ul>
         </div>
         <div class="content-manage">
@@ -81,11 +115,15 @@
                     开机自启动
                     <div id="btn-openAtStart" class="btn enable-click" onclick="on_off_OpenAtStart()"></div>
                 </div>
+                <div class="setting-item">
+                    自定义一言API
+                    <div id="btn-customizationAPI" class="btn enable-click" onclick="on_off_CustomizationAPI()"></div>
+                </div>
             </ul>
         </div>
         <div class="content-manage">
             <h1>关于</h1>
-            <p>API 来源：<a href="https://hitokoto.cn/">Hitokoto一言<a></p>
+            <p>API 来源：Hitokoto一言(https://hitokoto.cn/)</p>
             <p>基于 Electron 开发</p>
         </div>
     </div>

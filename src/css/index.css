@@ -75,7 +75,6 @@ button:hover::after {
 }
 
 .title-style {
-    font-size: 28px;
     font-weight: 700;
     font-family: 微软雅黑体;
     color: ivory;
@@ -84,7 +83,6 @@ button:hover::after {
 .hitokoto-text {
     display: flex;
     flex-shrink: 1;
-    font-size: 26px;
     font-family: 华文楷体;
     color: ivory;
 }
@@ -93,7 +91,6 @@ button:hover::after {
     display: flex;
     justify-content: flex-end;
     flex-shrink: 1;
-    font-size: large;
     color:darkgray;
 }
 

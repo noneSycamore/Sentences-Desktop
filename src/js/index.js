@@ -2,6 +2,12 @@ const { ipcRenderer } = require('electron')
 const settingBtn = document.getElementById('setting')
 const nextBtn = document.getElementById('next')
 const allItems = document.getElementById('app')
+const title_text = document.getElementById('title_text')
+const hitokoto_text = document.getElementById('hitokoto_text')
+const hitokoto_from = document.getElementById('hitokoto_from')
+
+const Store = require('electron-store');
+const store = new Store();
 
 settingBtn.addEventListener('click', () => {
     ipcRenderer.send('openSetting')
@@ -16,26 +22,44 @@ nextBtn.addEventListener('click', () => {
 //     ipcRenderer.send('penetration', flag)
 // });
 
-const data = { data: "fetch" };
-fetch('https://v1.hitokoto.cn')
-    .then(response => response.json())
-    .then(data => {
-        const hitokoto_text = document.querySelector('#hitokoto_text')
-        const hitokoto_from = document.querySelector('#hitokoto_from')
-        hitokoto_text.href = `https://hitokoto.cn/?uuid=${data.uuid}`
-        hitokoto_text.innerText = data.hitokoto
-        hitokoto_from.innerText = data.from
-        ipcRenderer.send('change-H', [allItems.offsetHeight])
-    })
-    .catch(console.error)
-
-ipcRenderer.on('send-H', () => { 
-    ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
+ipcRenderer.on('send-H', (event, arg) => { 
+    if (arg === 'onlyH') {
+        ipcRenderer.send('change-H', [allItems.offsetWidth,'onlyH'])
+    }
+    else {
+        ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
+    }
 })
 
-// nextBtn.addEventListener('contextmenu', (e) => {
-//     console.log('asd')
-//     e.preventDefault()
-//     ipcRenderer.send('show-context-menu')
-    
-// })
+ipcRenderer.on('hitokoto', () => {
+    fetchHitokoto()
+})
+
+function fetchHitokoto() {
+    const data = { data: "fetch" };
+    var RightClickData = store.get('RightClick')
+    var Types = ''
+    for (let key in RightClickData) { 
+        if (RightClickData[key]) {
+            Types = Types + `c=${key}&`
+        }
+    }
+    if (Types !== '') {
+        Types = '?' + Types.slice(0,-1)
+    }
+
+    fetch(`https://v1.hitokoto.cn/${Types}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(Types)
+            hitokoto_text.innerText = data.hitokoto
+            if (data.from_who) {
+                hitokoto_from.innerText = data.from + ' · ' + data.from_who
+            }
+            else {
+                hitokoto_from.innerText = data.from
+            }
+            ipcRenderer.send('change-H', [allItems.offsetHeight, 'onlyH'])
+        })
+        .catch(console.error)
+}
