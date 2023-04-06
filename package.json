@@ -24,8 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "electron-store": "^8.1.0",
-    "simplebar": "^6.2.4"
+    "electron-store": "^8.1.0"
   },
   "bugs": {
     "url": "https://github.com/noneSycamore/hitokoto-desktop/issues"
