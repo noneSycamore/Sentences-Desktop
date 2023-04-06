@@ -1,6 +1,6 @@
 {
   "name": "hitokoto-desktop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Hitokoto on Desktop",
   "main": "main.js",
   "scripts": {
@@ -24,7 +24,8 @@
   "license": "MIT",
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "simplebar": "^6.2.4"
   },
   "bugs": {
     "url": "https://github.com/noneSycamore/hitokoto-desktop/issues"
@@ -37,41 +38,41 @@
     "appId": "com.HitokotoDesktop",
     "productName": "Hitokoto Desktop",
     "files": [
-        "build/icons/*",
-        "src/**/*",
-        "main.js",
-        "node_modules/**/*"
+      "build/icons/*",
+      "src/**/*",
+      "main.js",
+      "node_modules/**/*"
     ],
     "directories": {
-        "output": "build/app",
-        "app": "./",
-        "buildResources": "assets"
+      "output": "build/app",
+      "app": "./",
+      "buildResources": "assets"
     },
     "nsis": {
-        "oneClick": false,
-        "allowToChangeInstallationDirectory": true,
-        "installerIcon": "./build/icons/win/hitokoto.ico",
-        "installerHeader": "./build/icons/win/icon.bmp",
-        "uninstallerIcon": "./build/icons/win/hitokoto.ico",
-        "perMachine": true,
-        "createDesktopShortcut": true,
-        "createStartMenuShortcut": true,
-        "license": "./src/license/license.txt"
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icons/win/hitokoto.ico",
+      "installerHeader": "./build/icons/win/icon.bmp",
+      "uninstallerIcon": "./build/icons/win/hitokoto.ico",
+      "perMachine": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "license": "./src/license/license.txt"
     },
     "win": {
-        "icon": "./build/icons/win/hitokoto.ico",
-        "target": [
-            {
-                "target": "nsis",
-                "arch": [
-                    "x64",
-                    "ia32"
-                ]
-            }
-        ]
+      "icon": "./build/icons/win/hitokoto.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     },
     "linux": {
-        "icon": "./build/icons/png/512x512.png"
+      "icon": "./build/icons/png/512x512.png"
     }
   }
 }

@@ -1,0 +1,32 @@
+directories:
+  output: build/app
+  buildResources: assets
+  app: ./
+appId: com.HitokotoDesktop
+productName: Hitokoto Desktop
+files:
+  - filter:
+      - build/icons/*
+      - src/**/*
+      - main.js
+      - node_modules/**/*
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: ./build/icons/win/hitokoto.ico
+  installerHeader: ./build/icons/win/icon.bmp
+  uninstallerIcon: ./build/icons/win/hitokoto.ico
+  perMachine: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  license: ./src/license/license.txt
+win:
+  icon: ./build/icons/win/hitokoto.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+linux:
+  icon: ./build/icons/png/512x512.png
+electronVersion: 23.2.0

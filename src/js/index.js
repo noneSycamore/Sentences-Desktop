@@ -9,12 +9,15 @@ const hitokoto_from = document.getElementById('hitokoto_from')
 const Store = require('electron-store');
 const store = new Store();
 
+fetchHitokoto()
+
 settingBtn.addEventListener('click', () => {
     ipcRenderer.send('openSetting')
 })
 
+// 获取下一个一言
 nextBtn.addEventListener('click', () => {
-    ipcRenderer.send('next')
+    fetchHitokoto()
 })
 
 // allItems.addEventListener("mousemove", event => {
@@ -29,10 +32,6 @@ ipcRenderer.on('send-H', (event, arg) => {
     else {
         ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
     }
-})
-
-ipcRenderer.on('hitokoto', () => {
-    fetchHitokoto()
 })
 
 function fetchHitokoto() {

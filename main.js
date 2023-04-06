@@ -85,7 +85,6 @@ function createWindow () {
     mainWindow.setFullScreenable(false);
     // 主窗口准备好后显示
     mainWindow.once('ready-to-show', () => {
-        mainWindow.webContents.send('hitokoto')
         changeTransparency(userTransparency)
         changeCurvature(userCurvature)
         changeFontSizeTitle(userFontSizeTitle)
@@ -282,12 +281,12 @@ function createWindow () {
         },
         {
             label: '显示/隐藏',
+            // type: 'checkbox',
             click: () => {
                 if (mainWindow.isVisible()) {
                     mainWindow.hide()
                     mainWindow.removeAllListeners('resized')
                     ipcMain.removeAllListeners('openSetting')
-                    ipcMain.removeAllListeners('next')
                     ipcMain.removeAllListeners('change-H')
                 }
                 else {
@@ -313,7 +312,6 @@ function createWindow () {
                 mainWindow.hide()
                 mainWindow.removeAllListeners('resized')
                 ipcMain.removeAllListeners('openSetting')
-                ipcMain.removeAllListeners('next')
                 ipcMain.removeAllListeners('change-H')
             }
             else {
@@ -448,7 +446,6 @@ function createWindow () {
                     mainWindow.hide()
                     mainWindow.removeAllListeners('resized')
                     ipcMain.removeAllListeners('openSetting')
-                    ipcMain.removeAllListeners('next')
                     ipcMain.removeAllListeners('change-H')
                 }
                 else {
@@ -467,14 +464,9 @@ function createWindow () {
         mainWindow.on('resized', () => {
             mainWindow.webContents.send('send-H', 'WH')
         })
-        
         // 打开设置窗口
         ipcMain.on('openSetting', () => {
             openSetting()
-        })
-        // 刷新页面，获取下一个一言
-        ipcMain.on('next', () => {
-            mainWindow.webContents.send('hitokoto')
         })
         // 更改窗口大小
         ipcMain.on('change-H', (event, arg) => {
@@ -515,14 +507,17 @@ function createWindow () {
     function changeCurvature (userCurvature) {
         mainWindow.webContents.executeJavaScript(`allItems.style.borderRadius = "${userCurvature}px";`)
     }
+    // 更改标题文字大小
     function changeFontSizeTitle (userFontSizeTitle) {
         mainWindow.webContents.executeJavaScript(`title_text.style.fontSize = "${userFontSizeTitle}px";`)
         mainWindow.webContents.send('send-H', 'onlyH')
     }
+    // 更改一言文字大小
     function changeFontSizeText (userFontSizeText) {
         mainWindow.webContents.executeJavaScript(`hitokoto_text.style.fontSize = "${userFontSizeText}px";`)
         mainWindow.webContents.send('send-H', 'onlyH')
     }
+    // 更改来源文字大小
     function changeFontSizeFrom (userFontSizeFrom) {
         mainWindow.webContents.executeJavaScript(`hitokoto_from.style.fontSize = "${userFontSizeFrom}px";`)
         mainWindow.webContents.send('send-H', 'onlyH')
