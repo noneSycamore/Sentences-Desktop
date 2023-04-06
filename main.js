@@ -10,7 +10,7 @@ const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath
 const WM_INITMENU = 0x0116;
 
 // 初始化
-let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }
+let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
 
 
 app.whenReady().then(() => {
@@ -73,12 +73,15 @@ function createWindow () {
         transparent: true,
         show: false,
         maximizable: false,
+        minimizable: false,
+        parent: null,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
         }
     })
+
     mainWindow.loadFile('./src/index.html');
     mainWindow.setIgnoreMouseEvents(false);
     mainWindow.setSkipTaskbar(true);
@@ -110,8 +113,8 @@ function createWindow () {
             return
         }
         childWin = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 850,
+            height: 650,
             frame: false,
             title: "设置",
             maximizable: false,
@@ -301,9 +304,7 @@ function createWindow () {
         {
             label: '退出',
             click: () => {
-                ifSaveXYWH()
-                setIFOpenAtStart()
-                app.exit()
+                beforeExit()
             }
         }
         ])
@@ -449,9 +450,7 @@ function createWindow () {
                     ipcMain.removeAllListeners('change-H')
                 }
                 else {
-                    ifSaveXYWH()
-                    setIFOpenAtStart()
-                    app.exit()
+                    beforeExit()
                 }
             }
         }
@@ -521,6 +520,12 @@ function createWindow () {
     function changeFontSizeFrom (userFontSizeFrom) {
         mainWindow.webContents.executeJavaScript(`hitokoto_from.style.fontSize = "${userFontSizeFrom}px";`)
         mainWindow.webContents.send('send-H', 'onlyH')
+    }
+    // 退出前操作
+    function beforeExit () {
+        ifSaveXYWH()
+        setIFOpenAtStart()
+        app.exit()
     }
 }
 // 初始化
