@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen, Menu, MenuItem, Tray } = require('electron')
+const { app, BrowserWindow, ipcMain, screen, Menu, Tray, globalShortcut  } = require('electron')
 const path = require('path')
 const { webContents } = require('electron')
 const Store = require('electron-store');
@@ -8,6 +8,11 @@ const store = new Store();
 const exeName = path.basename(process.execPath)
 const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
 const WM_INITMENU = 0x0116;
+// const ffi = require('ffi-napi');
+// const workerW = new ffi.Library('user32', {
+//     'FindWindowExA': ['int', ['int', 'int', 'string', 'string']],
+//     'SetParent': ['int', ['int', 'int']],
+// });
 
 // 初始化
 let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
@@ -23,7 +28,6 @@ app.whenReady().then(() => {
             createWindow()
     })
 })
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin')
         app.quit()
@@ -71,10 +75,11 @@ function createWindow () {
         y: userY,
         frame: false,
         transparent: true,
+        // title: "一言",
+        // icon: iconPath,
         show: false,
         maximizable: false,
-        minimizable: false,
-        parent: null,
+        skipTaskbar: true,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
@@ -84,7 +89,6 @@ function createWindow () {
 
     mainWindow.loadFile('./src/index.html');
     mainWindow.setIgnoreMouseEvents(false);
-    mainWindow.setSkipTaskbar(true);
     mainWindow.setFullScreenable(false);
     // 主窗口准备好后显示
     mainWindow.once('ready-to-show', () => {
@@ -106,7 +110,9 @@ function createWindow () {
         rightClickMenu = createRightClickMenu()
         rightClickMenu.popup();
     });
-
+    mainWindow.on('minimize', () => {
+        console.log('mainWindow minimize')
+    })
     // 设置窗口
     function createSetting () {
         if (childWin) {
@@ -117,9 +123,9 @@ function createWindow () {
             height: 650,
             frame: false,
             title: "设置",
-            maximizable: false,
             icon: iconPath,
             show: false,
+            maximizable: false,
             webPreferences: {
                 nodeIntegration: true,
                 enableRemoteModule: true,
@@ -127,6 +133,7 @@ function createWindow () {
             }
         })
         childWin.loadFile('./src/setting.html')
+        childWin.setFullScreenable(false);
         // 设置窗口准备好后显示
         childWin.once('ready-to-show', () => {
             childWin.show()
@@ -144,12 +151,16 @@ function createWindow () {
     function openSetting () {
         // 创建设置窗口
         createSetting()
+        if (childWin === null) { 
+            return
+        }
         // 事件处理函数：发送WH主窗口大小数据
         const sendWH = () => {
             childWin.webContents.send('wh', mainWindow.getSize())
         }
         // 事件处理函数：发送XY主窗口位置数据
         const sendXY = () => {
+
             childWin.webContents.send('xy', mainWindow.getPosition())
         }
         ifOpenXYWHListener()
@@ -255,6 +266,19 @@ function createWindow () {
                 ipcMain.removeAllListeners('fontSizeTitle-changed')
                 ipcMain.removeAllListeners('fontSizeText-changed')
                 ipcMain.removeAllListeners('fontSizeFrom-changed')
+                // 改回默认大小
+                store.set('Appearance.FontSize.fontSizeTitle.value', store.get('Preferences.Appearance.FontSize.fontSizeTitle.value'))
+                store.set('Appearance.FontSize.fontSizeTitle.percent', store.get('Preferences.Appearance.FontSize.fontSizeTitle.percent'))
+                store.set('Appearance.FontSize.fontSizeText.value', store.get('Preferences.Appearance.FontSize.fontSizeText.value'))
+                store.set('Appearance.FontSize.fontSizeText.percent', store.get('Preferences.Appearance.FontSize.fontSizeText.percent'))
+                store.set('Appearance.FontSize.fontSizeFrom.value', store.get('Preferences.Appearance.FontSize.fontSizeFrom.value'))
+                store.set('Appearance.FontSize.fontSizeFrom.percent', store.get('Preferences.Appearance.FontSize.fontSizeFrom.percent'))
+                userFontSizeTitle = store.get('Appearance.FontSize.fontSizeTitle.value')
+                changeFontSizeTitle(userFontSizeTitle)
+                userFontSizeText = store.get('Appearance.FontSize.fontSizeText.value')
+                changeFontSizeText(userFontSizeText)
+                userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
+                changeFontSizeFrom(userFontSizeFrom)
             }
         }
         // 函数：开启/关闭对是否最小化到托盘的监听

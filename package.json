@@ -24,14 +24,19 @@
   "license": "MIT",
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "electron-store": "^8.1.0"
+    "electron": "^20.0.0",
+    "electron-store": "^8.1.0",
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.0.3",
+    "win32-api": "^20.4.1"
   },
   "bugs": {
     "url": "https://github.com/noneSycamore/hitokoto-desktop/issues"
   },
   "homepage": "https://github.com/noneSycamore/hitokoto-desktop#readme",
   "devDependencies": {
-    "electron-packager": "^17.1.1"
+    "electron-packager": "^17.1.1",
+    "electron-rebuild": "^3.2.9"
   },
   "build": {
     "appId": "com.HitokotoDesktop",

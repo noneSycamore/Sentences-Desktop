@@ -71,7 +71,7 @@ button:hover::after {
 }
 
 .titleline{
-    
+    font-size: 28px;
     padding: 20px 20px;
 }
 
@@ -82,6 +82,7 @@ button:hover::after {
 }
 
 .hitokoto-text {
+    font-size: 26px;
     display: flex;
     flex-shrink: 1;
     font-family: 华文楷体;
@@ -89,6 +90,7 @@ button:hover::after {
 }
 
 .hitokoto-from {
+    font-size: 18px;
     display: flex;
     justify-content: flex-end;
     flex-shrink: 1;

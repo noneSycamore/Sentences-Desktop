@@ -1,0 +1,1 @@
+{"version":3,"file":"union.types.d.ts","sourceRoot":"","sources":["../../../src/lib/union/union.types.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,iBAAiB,EAAE,MAAM,oBAAoB,CAAA;AAG7D,MAAM,WAAW,8BAA+B,SAAQ,iBAAiB;IACvE,KAAK,EAAE,KAAK,CAAA;IACZ,QAAQ,EAAE,KAAK,CAAA;IACf,GAAG,EAAE,KAAK,CAAA;CACX"}
