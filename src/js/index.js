@@ -27,12 +27,10 @@ nextBtn.addEventListener('click', () => {
 
 ipcRenderer.on('send-H', (event, arg) => { 
     if (arg === 'onlyH') {
-        console.log(allItems.offsetWidth,'onlyH')
-        ipcRenderer.send('change-H', [allItems.offsetWidth,'onlyH'])
+        ipcRenderer.send('change-H', [allItems.offsetHeight+4,'onlyH'])
     }
     else {
-        console.log(allItems.offsetWidth, allItems.offsetHeight)
-        ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
+        ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight+4])
     }
 })
 
@@ -60,7 +58,7 @@ function fetchHitokoto() {
             else {
                 hitokoto_from.innerText = data.from
             }
-            ipcRenderer.send('change-H', [allItems.offsetHeight, 'onlyH'])
+            ipcRenderer.send('change-H', [allItems.offsetHeight+4, 'onlyH'])
         })
         .catch(console.error)
 }

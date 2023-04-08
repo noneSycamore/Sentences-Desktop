@@ -3,12 +3,13 @@ const path = require('path')
 const { webContents } = require('electron')
 const Store = require('electron-store');
 const { config } = require('process');
+const ioHook = require('iohook');
 Store.initRenderer()
 const store = new Store();
 const exeName = path.basename(process.execPath)
 const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
 const WM_INITMENU = 0x0116;
-const {attach, detach, refresh} = require("electron-as-wallpaper");
+// const {attach, detach, refresh} = require("electron-as-wallpaper");
 
 // 初始化
 let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
@@ -79,7 +80,7 @@ function createMainWindow () {
             contextIsolation: false,
         }
     })
-    attach(mainWindow);
+    // attach(mainWindow);
     mainWindow.loadFile('./src/index.html');
     setMainWindow()
 }
@@ -93,6 +94,7 @@ function setMainWindow () {
         changeFontSizeTitle(userFontSizeTitle)
         changeFontSizeText(userFontSizeText)
         changeFontSizeFrom(userFontSizeFrom)
+        // mainWindow.webContents.send('send-H', 'onlyH')
         openListenerWhenShow()
         if (store.get('Preferences.Other.ifMinimize')) {
             createTray()
@@ -102,6 +104,17 @@ function setMainWindow () {
 }
 // 显示时开启监听
 function openListenerWhenShow () {
+    // 注册系统快捷键
+    ioHook.start();
+    const winDid = ioHook.registerShortcut(
+        [3675, 32],
+        (keys) => {
+            mainWindow.minimize()
+        },
+        (keys) => {
+            mainWindow.restore()
+        },
+    );
     // 主窗口大小改变事件
     mainWindow.on('resized', () => {
         mainWindow.webContents.send('send-H', 'WH')
@@ -113,9 +126,6 @@ function openListenerWhenShow () {
         rightClickMenu = createRightClickMenu()
         rightClickMenu.popup();
     });
-    mainWindow.on('minimize', () => {
-        console.log('mainWindow minimize')
-    })
     // 打开设置窗口
     ipcMain.on('openSetting', () => {
         openSetting()
@@ -181,7 +191,6 @@ function openSetting () {
     }
     // 事件处理函数：发送XY主窗口位置数据
     const sendXY = () => {
-
         childWin.webContents.send('xy', mainWindow.getPosition())
     }
     ifOpenXYWHListener()
@@ -282,6 +291,7 @@ function openSetting () {
             ipcMain.on('fontSizeFrom-changed', (event, arg) => {
                 fontSizeFromListener(arg[0], arg[1])
             })
+            mainWindow.webContents.send('send-H', 'onlyH')
         }
         else {
             ipcMain.removeAllListeners('fontSizeTitle-changed')
@@ -300,6 +310,7 @@ function openSetting () {
             changeFontSizeText(userFontSizeText)
             userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
             changeFontSizeFrom(userFontSizeFrom)
+            mainWindow.webContents.send('send-H', 'onlyH')
         }
     }
     // 函数：开启/关闭对是否最小化到托盘的监听
@@ -336,6 +347,9 @@ function createTray () {
                 mainWindow.removeAllListeners('resized')
                 ipcMain.removeAllListeners('openSetting')
                 ipcMain.removeAllListeners('change-H')
+                // 卸载iohook监听
+                ioHook.unload();
+                ioHook.stop();
             }
             else {
                 openListenerWhenShow()
@@ -359,6 +373,9 @@ function createTray () {
             mainWindow.removeAllListeners('resized')
             ipcMain.removeAllListeners('openSetting')
             ipcMain.removeAllListeners('change-H')
+            // 卸载iohook监听
+            ioHook.unload();
+            ioHook.stop();
         }
         else {
             openListenerWhenShow()
@@ -531,22 +548,22 @@ function changeCurvature (userCurvature) {
 // 更改标题文字大小
 function changeFontSizeTitle (userFontSizeTitle) {
     mainWindow.webContents.executeJavaScript(`title_text.style.fontSize = "${userFontSizeTitle}px";`)
-    mainWindow.webContents.send('send-H', 'onlyH')
 }
 // 更改一言文字大小
 function changeFontSizeText (userFontSizeText) {
     mainWindow.webContents.executeJavaScript(`hitokoto_text.style.fontSize = "${userFontSizeText}px";`)
-    mainWindow.webContents.send('send-H', 'onlyH')
 }
 // 更改来源文字大小
 function changeFontSizeFrom (userFontSizeFrom) {
     mainWindow.webContents.executeJavaScript(`hitokoto_from.style.fontSize = "${userFontSizeFrom}px";`)
-    mainWindow.webContents.send('send-H', 'onlyH')
 }
 // 退出前操作
 function beforeExit () {
     ifSaveXYWH()
     setIFOpenAtStart()
+    // 卸载iohook监听
+    ioHook.unload();
+    ioHook.stop();
     app.exit()
 }
 
