@@ -8,7 +8,7 @@ const store = new Store();
 const exeName = path.basename(process.execPath)
 const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
 const WM_INITMENU = 0x0116;
-// const {attach, detach, refresh} = require("electron-as-wallpaper");
+const {attach, detach, refresh} = require("electron-as-wallpaper");
 
 // 初始化
 let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
@@ -79,7 +79,7 @@ function createMainWindow () {
             contextIsolation: false,
         }
     })
-    // attach(mainWindow);
+    attach(mainWindow);
     mainWindow.loadFile('./src/index.html');
     setMainWindow()
 }

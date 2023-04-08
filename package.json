@@ -23,21 +23,18 @@
   "author": "Sycamore",
   "license": "MIT",
   "dependencies": {
-    "@electron/remote": "^2.0.9",
-    "electron": "^20.0.0",
-    "electron-as-wallpaper": "^0.0.2-dev",
+    "electron": "^12.2.3",
+    "electron-as-wallpaper": "0.0.2-dev",
+    "electron-build": "0.0.3",
     "electron-store": "^8.1.0",
-    "ffi-napi": "^4.0.3",
-    "ref-napi": "^3.0.3",
-    "win32-api": "^20.4.1"
+    "node-abi": "^3.35.0"
   },
   "bugs": {
     "url": "https://github.com/noneSycamore/sentences-desktop/issues"
   },
   "homepage": "https://github.com/noneSycamore/sentences-desktop#readme",
   "devDependencies": {
-    "electron-packager": "^17.1.1",
-    "electron-rebuild": "^3.2.9"
+    "iohook": "^0.9.3"
   },
   "build": {
     "appId": "com.Sentences",
