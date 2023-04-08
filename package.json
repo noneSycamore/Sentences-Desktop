@@ -1,82 +1,15 @@
 {
-  "name": "hitokoto-desktop",
-  "version": "1.1.0",
-  "description": "Hitokoto on Desktop",
+  "name": "sentences-desktop",
+  "version": "1.0.0",
+  "description": "Sentences-Desktop",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "postinstall": "electron-builder install-app-deps",
-    "dist": "electron-builder",
-    "dist-win": "electron-builder --win --ia32",
-    "dist-win64": "electron-builder --win --x64",
-    "dist-mac": "electron-builder --mac",
-    "dist-linux": "electron-builder --linux"
+    "test": "electron ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/noneSycamore/hitokoto-desktop.git"
-  },
-  "keywords": [
-    "hitokoto"
-  ],
   "author": "Sycamore",
-  "license": "MIT",
-  "dependencies": {
-    "@electron/remote": "^2.0.9",
-    "electron": "^20.0.0",
-    "electron-store": "^8.1.0",
-    "ffi-napi": "^4.0.3",
-    "ref-napi": "^3.0.3",
-    "win32-api": "^20.4.1"
-  },
-  "bugs": {
-    "url": "https://github.com/noneSycamore/hitokoto-desktop/issues"
-  },
-  "homepage": "https://github.com/noneSycamore/hitokoto-desktop#readme",
+  "license": "ISC",
   "devDependencies": {
-    "electron-packager": "^17.1.1",
-    "electron-rebuild": "^3.2.9"
-  },
-  "build": {
-    "appId": "com.HitokotoDesktop",
-    "productName": "Hitokoto Desktop",
-    "files": [
-      "build/icons/*",
-      "src/**/*",
-      "main.js",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "output": "build/app",
-      "app": "./",
-      "buildResources": "assets"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./build/icons/win/hitokoto.ico",
-      "installerHeader": "./build/icons/win/icon.bmp",
-      "uninstallerIcon": "./build/icons/win/hitokoto.ico",
-      "perMachine": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "license": "./src/license/license.txt"
-    },
-    "win": {
-      "icon": "./build/icons/win/hitokoto.ico",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
-      ]
-    },
-    "linux": {
-      "icon": "./build/icons/png/512x512.png"
-    }
+    "electron": "^20.0.0",
+    "electron-store": "^8.1.0"
   }
 }

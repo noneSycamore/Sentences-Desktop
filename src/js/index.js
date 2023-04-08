@@ -27,9 +27,11 @@ nextBtn.addEventListener('click', () => {
 
 ipcRenderer.on('send-H', (event, arg) => { 
     if (arg === 'onlyH') {
+        console.log(allItems.offsetWidth,'onlyH')
         ipcRenderer.send('change-H', [allItems.offsetWidth,'onlyH'])
     }
     else {
+        console.log(allItems.offsetWidth, allItems.offsetHeight)
         ipcRenderer.send('change-H', [allItems.offsetWidth,allItems.offsetHeight])
     }
 })
