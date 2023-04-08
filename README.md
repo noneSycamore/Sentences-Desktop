@@ -1,4 +1,4 @@
-# Hitokoto-Desktop
+# Sentences-Desktop
 
 [练手作]
 
