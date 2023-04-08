@@ -1,0 +1,125 @@
+/**
+ * win32-api
+ * FFI definitions of windows win32 api for node-ffi
+ *
+ * @version 20.4.0
+ * @author waiting
+ * @license MIT
+ * @link https://waitingsong.github.io/node-win32-api
+ */
+
+'use strict';
+
+/**
+ * https://docs.microsoft.com/en-us/windows/win32/winmsg/windowing
+ */
+// https://docs.microsoft.com/zh-cn/windows/win32/winmsg/window-messages
+const MN_GETHMENU = 0x01E1;
+const WM_ERASEBKGND = 0x0014;
+const WM_GETFONT = 0x0031;
+const WM_GETTEXT = 0x000D;
+const WM_GETTEXTLENGTH = 0x000E;
+const WM_SETFONT = 0x0030;
+const WM_SETICON = 0x0080;
+const WM_SETTEXT = 0x000C;
+// https://docs.microsoft.com/zh-cn/windows/win32/winmsg/window-notifications
+const WM_ACTIVATEAPP = 0x001C;
+const WM_CANCELMODE = 0x001F;
+const WM_CHILDACTIVATE = 0x0022;
+const WM_CLOSE = 0x0010;
+const WM_CREATE = 0x0001;
+const WM_DESTROY = 0x0002;
+const WM_ENABLE = 0x000A;
+const WM_ENTERSIZEMOVE = 0x0231;
+const WM_EXITSIZEMOVE = 0x0232;
+const WM_GETICON = 0x007F;
+const WM_GETMINMAXINFO = 0x0024;
+const WM_INPUTLANGCHANGE = 0x0051;
+const WM_INPUTLANGCHANGEREQUEST = 0x0050;
+const WM_MOVE = 0x0003;
+const WM_MOVING = 0x0216;
+const WM_NCACTIVATE = 0x0086;
+const WM_NCCALCSIZE = 0x0083;
+const WM_NCCREATE = 0x0081;
+const WM_NCDESTROY = 0x0082;
+const WM_NULL = 0x0000;
+const WM_QUERYDRAGICON = 0x0037;
+const WM_QUERYOPEN = 0x0013;
+const WM_QUIT = 0x0012;
+const WM_SHOWWINDOW = 0x0018;
+const WM_SIZE = 0x0005;
+const WM_SIZING = 0x0214;
+const WM_STYLECHANGED = 0x007D;
+const WM_STYLECHANGING = 0x007C;
+const WM_THEMECHANGED = 0x031A;
+const WM_USERCHANGED = 0x0054;
+const WM_WINDOWPOSCHANGED = 0x0047;
+const WM_WINDOWPOSCHANGING = 0x0046;
+/** https://docs.microsoft.com/en-us/windows/win32/dataxchg/wm-copydata */
+const WM_COPYDATA = 0x004A;
+// https://docs.microsoft.com/en-us/windows/win32/menurc/menu-notifications
+const WM_COMMAND = 0x0111;
+const WM_CONTEXTMENU = 0x007B;
+const WM_ENTERMENULOOP = 0x0211;
+const WM_EXITMENULOOP = 0x0212;
+const WM_GETTITLEBARINFOEX = 0x033F;
+const WM_MENUCOMMAND = 0x0126;
+const WM_MENUDRAG = 0x0123;
+const WM_MENUGETOBJECT = 0x0124;
+const WM_MENURBUTTONUP = 0x0122;
+const WM_NEXTMENU = 0x0213;
+const WM_UNINITMENUPOPUP = 0x0125;
+
+exports.MN_GETHMENU = MN_GETHMENU;
+exports.WM_ACTIVATEAPP = WM_ACTIVATEAPP;
+exports.WM_CANCELMODE = WM_CANCELMODE;
+exports.WM_CHILDACTIVATE = WM_CHILDACTIVATE;
+exports.WM_CLOSE = WM_CLOSE;
+exports.WM_COMMAND = WM_COMMAND;
+exports.WM_CONTEXTMENU = WM_CONTEXTMENU;
+exports.WM_COPYDATA = WM_COPYDATA;
+exports.WM_CREATE = WM_CREATE;
+exports.WM_DESTROY = WM_DESTROY;
+exports.WM_ENABLE = WM_ENABLE;
+exports.WM_ENTERMENULOOP = WM_ENTERMENULOOP;
+exports.WM_ENTERSIZEMOVE = WM_ENTERSIZEMOVE;
+exports.WM_ERASEBKGND = WM_ERASEBKGND;
+exports.WM_EXITMENULOOP = WM_EXITMENULOOP;
+exports.WM_EXITSIZEMOVE = WM_EXITSIZEMOVE;
+exports.WM_GETFONT = WM_GETFONT;
+exports.WM_GETICON = WM_GETICON;
+exports.WM_GETMINMAXINFO = WM_GETMINMAXINFO;
+exports.WM_GETTEXT = WM_GETTEXT;
+exports.WM_GETTEXTLENGTH = WM_GETTEXTLENGTH;
+exports.WM_GETTITLEBARINFOEX = WM_GETTITLEBARINFOEX;
+exports.WM_INPUTLANGCHANGE = WM_INPUTLANGCHANGE;
+exports.WM_INPUTLANGCHANGEREQUEST = WM_INPUTLANGCHANGEREQUEST;
+exports.WM_MENUCOMMAND = WM_MENUCOMMAND;
+exports.WM_MENUDRAG = WM_MENUDRAG;
+exports.WM_MENUGETOBJECT = WM_MENUGETOBJECT;
+exports.WM_MENURBUTTONUP = WM_MENURBUTTONUP;
+exports.WM_MOVE = WM_MOVE;
+exports.WM_MOVING = WM_MOVING;
+exports.WM_NCACTIVATE = WM_NCACTIVATE;
+exports.WM_NCCALCSIZE = WM_NCCALCSIZE;
+exports.WM_NCCREATE = WM_NCCREATE;
+exports.WM_NCDESTROY = WM_NCDESTROY;
+exports.WM_NEXTMENU = WM_NEXTMENU;
+exports.WM_NULL = WM_NULL;
+exports.WM_QUERYDRAGICON = WM_QUERYDRAGICON;
+exports.WM_QUERYOPEN = WM_QUERYOPEN;
+exports.WM_QUIT = WM_QUIT;
+exports.WM_SETFONT = WM_SETFONT;
+exports.WM_SETICON = WM_SETICON;
+exports.WM_SETTEXT = WM_SETTEXT;
+exports.WM_SHOWWINDOW = WM_SHOWWINDOW;
+exports.WM_SIZE = WM_SIZE;
+exports.WM_SIZING = WM_SIZING;
+exports.WM_STYLECHANGED = WM_STYLECHANGED;
+exports.WM_STYLECHANGING = WM_STYLECHANGING;
+exports.WM_THEMECHANGED = WM_THEMECHANGED;
+exports.WM_UNINITMENUPOPUP = WM_UNINITMENUPOPUP;
+exports.WM_USERCHANGED = WM_USERCHANGED;
+exports.WM_WINDOWPOSCHANGED = WM_WINDOWPOSCHANGED;
+exports.WM_WINDOWPOSCHANGING = WM_WINDOWPOSCHANGING;
+//# sourceMappingURL=index.consts.cjs.map

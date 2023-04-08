@@ -136,6 +136,7 @@ function openListenerWhenShow () {
 // 设置窗口
 function createSetting () {
     if (childWin) {
+        childWin.show()
         return
     }
     childWin = new BrowserWindow({
