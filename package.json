@@ -25,7 +25,6 @@
   "dependencies": {
     "electron": "^12.2.3",
     "electron-as-wallpaper": "0.0.2-dev",
-    "electron-build": "0.0.3",
     "electron-store": "^8.1.0",
     "node-abi": "^3.35.0"
   },
@@ -34,7 +33,8 @@
   },
   "homepage": "https://github.com/noneSycamore/sentences-desktop#readme",
   "devDependencies": {
-    "iohook": "^0.9.3"
+    "iohook": "^0.9.3",
+    "electron-builder": "23.6.0"
   },
   "build": {
     "appId": "com.Sentences",
