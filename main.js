@@ -96,7 +96,7 @@ function setMainWindow () {
         changeFontSizeFrom(userFontSizeFrom)
         // mainWindow.webContents.send('send-H', 'onlyH')
         openListenerWhenShow()
-        if (store.get('Preferences.Other.ifMinimize')) {
+        if (store.get('Other.ifMinimize')) {
             createTray()
         }
         mainWindow.show()
@@ -105,7 +105,7 @@ function setMainWindow () {
 // 显示时开启监听
 function openListenerWhenShow () {
     // 注册系统快捷键
-    ioHook.start();
+    ioHook.start(false);
     const winDid = ioHook.registerShortcut(
         [3675, 32],
         (keys) => {
