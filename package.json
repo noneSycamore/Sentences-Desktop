@@ -23,9 +23,9 @@
   "author": "Sycamore",
   "license": "MIT",
   "dependencies": {
-     "iohook": "^0.9.3",
-    "electron-as-wallpaper": "0.0.2-dev",
+    "electron-addtodesktop": "^1.0.2",
     "electron-store": "^8.1.0",
+    "iohook": "^0.9.3",
     "node-abi": "^3.35.0"
   },
   "bugs": {
@@ -39,17 +39,17 @@
   },
   "iohook": {
     "targets": [
-        "node-83",
-        "electron-87"
+      "node-83",
+      "electron-87"
     ],
     "platforms": [
-        "win32",
-        "darwin",
-        "linux"
+      "win32",
+      "darwin",
+      "linux"
     ],
     "arches": [
-        "x64",
-        "ia32"
+      "x64",
+      "ia32"
     ]
   },
   "build": {

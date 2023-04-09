@@ -2,14 +2,13 @@ const { app, BrowserWindow, ipcMain, screen, Menu, Tray } = require('electron')
 const path = require('path')
 const { webContents } = require('electron')
 const Store = require('electron-store');
-const { config } = require('process');
-const ioHook = require('iohook');
+// const ioHook = require('iohook');
+const {attach, detach} = require("electron-addtodesktop");
 Store.initRenderer()
 const store = new Store();
 const exeName = path.basename(process.execPath)
 const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
 const WM_INITMENU = 0x0116;
-// const {attach, detach, refresh} = require("electron-as-wallpaper");
 
 // 初始化
 let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
@@ -19,7 +18,6 @@ let tray = null
 
 app.whenReady().then(() => {
     init()
-    // 渲染窗口
     createMainWindow()
 })
 app.on('window-all-closed', () => {
@@ -69,8 +67,6 @@ function createMainWindow () {
         y: userY,
         frame: false,
         transparent: true,
-        // title: "一言",
-        // icon: iconPath,
         show: false,
         maximizable: false,
         skipTaskbar: true,
@@ -80,7 +76,7 @@ function createMainWindow () {
             contextIsolation: false,
         }
     })
-    // attach(mainWindow);
+    attach(mainWindow);
     mainWindow.loadFile('./src/index.html');
     setMainWindow()
 }
@@ -94,7 +90,6 @@ function setMainWindow () {
         changeFontSizeTitle(userFontSizeTitle)
         changeFontSizeText(userFontSizeText)
         changeFontSizeFrom(userFontSizeFrom)
-        // mainWindow.webContents.send('send-H', 'onlyH')
         openListenerWhenShow()
         if (store.get('Other.ifMinimize')) {
             createTray()
@@ -105,16 +100,16 @@ function setMainWindow () {
 // 显示时开启监听
 function openListenerWhenShow () {
     // 注册系统快捷键
-    ioHook.start(false);
-    const winDid = ioHook.registerShortcut(
-        [3675, 32],
-        (keys) => {
-            mainWindow.minimize()
-        },
-        (keys) => {
-            mainWindow.restore()
-        },
-    );
+    // ioHook.start(false);
+    // const winDid = ioHook.registerShortcut(
+    //     [3675, 32],
+    //     (keys) => {
+    //         mainWindow.minimize()
+    //     },
+    //     (keys) => {
+    //         mainWindow.restore()
+    //     },
+    // );
     // 主窗口大小改变事件
     mainWindow.on('resized', () => {
         mainWindow.webContents.send('send-H', 'WH')
@@ -347,9 +342,6 @@ function createTray () {
                 mainWindow.removeAllListeners('resized')
                 ipcMain.removeAllListeners('openSetting')
                 ipcMain.removeAllListeners('change-H')
-                // 卸载iohook监听
-                ioHook.unload();
-                ioHook.stop();
             }
             else {
                 openListenerWhenShow()
@@ -373,9 +365,6 @@ function createTray () {
             mainWindow.removeAllListeners('resized')
             ipcMain.removeAllListeners('openSetting')
             ipcMain.removeAllListeners('change-H')
-            // 卸载iohook监听
-            ioHook.unload();
-            ioHook.stop();
         }
         else {
             openListenerWhenShow()
@@ -562,8 +551,9 @@ function beforeExit () {
     ifSaveXYWH()
     setIFOpenAtStart()
     // 卸载iohook监听
-    ioHook.unload();
-    ioHook.stop();
+    // ioHook.unload();
+    // ioHook.stop();
+    detach(mainWindow);
     app.exit()
 }
 
