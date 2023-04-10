@@ -23,10 +23,9 @@
   "author": "Sycamore",
   "license": "MIT",
   "dependencies": {
-    "electron-addtodesktop": "^1.0.3",
     "electron-store": "^8.1.0",
-    "iohook": "^0.9.3",
-    "node-abi": "^3.35.0"
+    "node-abi": "^3.35.0",
+    "electron-addtodesktop": "^1.0.3"
   },
   "bugs": {
     "url": "https://github.com/noneSycamore/sentences-desktop/issues"
@@ -34,23 +33,7 @@
   "homepage": "https://github.com/noneSycamore/sentences-desktop#readme",
   "devDependencies": {
     "electron": "^12.2.3",
-    "electron-builder": "23.6.0",
-    "iohook": "^0.9.3"
-  },
-  "iohook": {
-    "targets": [
-      "node-83",
-      "electron-87"
-    ],
-    "platforms": [
-      "win32",
-      "darwin",
-      "linux"
-    ],
-    "arches": [
-      "x64",
-      "ia32"
-    ]
+    "electron-builder": "23.6.0"
   },
   "build": {
     "appId": "com.Sentences",
