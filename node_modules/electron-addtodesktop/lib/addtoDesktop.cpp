@@ -44,7 +44,7 @@ Napi::Value Attach(const Napi::CallbackInfo &info)
     HWND win = static_cast<HWND>(*reinterpret_cast<void **>(wndHandle.Data()));
 
     // 记录要插入的窗口
-    HWND insert_hWnd;
+    HWND insert_hWnd = NULL;
 
     // 获取窗口句柄
     HWND hWnd = FindWindow(_T("Progman"), _T("Program Manager"));
@@ -68,7 +68,7 @@ Napi::Value Attach(const Napi::CallbackInfo &info)
             if (childWindow_hwnd == NULL)
             {
                 SendMessage(class_name->win_hwnd, 16, 0, 0);
-                if (insert_hWnd) // 如果insert_hWnd不为空，break
+                if (insert_hWnd != NULL) // 如果insert_hWnd不为空，break
                 {
                     break;
                 }

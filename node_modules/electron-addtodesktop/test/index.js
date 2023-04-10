@@ -18,7 +18,6 @@ function createWindow () {
         width: 350,
         height: 200,
     })
-    flag = attach(mainWindow.getNativeWindowHandle());
-    console.log(flag)
+    attach(mainWindow);
     // mainWindow.loadFile('./src/index.html');
 }
