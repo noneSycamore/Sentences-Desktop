@@ -48,7 +48,7 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         beforeExit()
-        app.quit()
+        app.relaunch()  // 崩溃重启
     }
 })
 app.on('before-quit', (event) => {
@@ -103,6 +103,7 @@ function createMainWindow () {
         maximizable: false,
         skipTaskbar: true,
         webPreferences: {
+            devTools: false,
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
@@ -175,12 +176,14 @@ function createSetting () {
         show: false,
         maximizable: false,
         webPreferences: {
+            devTools: false,
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
         }
     })
     childWin.loadFile('./src/setting.html')
+    childWin.webContents.closeDevTools();
     childWin.setFullScreenable(false);
     // 设置窗口准备好后显示
     childWin.once('ready-to-show', () => {
