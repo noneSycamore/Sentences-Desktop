@@ -6,8 +6,7 @@ const Store = require('electron-store');
 const {attach, detach} = require("electron-addtodesktop");
 Store.initRenderer()
 const store = new Store();
-const exeName = path.basename(process.execPath)
-const appPath = app.isPackaged ? path.dirname(process.execPath) : app.getAppPath();
+const appPath = app.isPackaged ? process.execPath : app.getAppPath();
 const WM_INITMENU = 0x0116;
 
 // 初始化
@@ -603,6 +602,7 @@ function init () {
         store.set('RightClick', store.get('Preferences.RightClick'))
     }
     iconPath = path.join(__dirname, '/src/icons/hitokoto.ico');
+    setIFOpenAtStart()
 
 }
 // 首选项
@@ -644,18 +644,9 @@ function loadPreferences () {
 }
 //设置是否开机启动
 function setIFOpenAtStart () {
-    if (store.get('Other.ifOpenAtStart')) {
-        app.setLoginItemSettings({
-            openAtLogin: true,
-            path:appPath,
-            args: ['--processStart', `"${exeName}"`],
-        });
-    }
-    else {
-        app.setLoginItemSettings({
-            openAtLogin: false,
-            path:appPath,
-        });
-    }
+    app.setLoginItemSettings({
+        openAtLogin: store.get('Other.ifOpenAtStart'),
+        path:appPath,
+    });
 }
 
