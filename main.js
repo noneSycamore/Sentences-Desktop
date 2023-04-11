@@ -32,9 +32,7 @@ let tray = null
 const isFirstInstance = app.requestSingleInstanceLock()
 
 if (!isFirstInstance) {
-    setTimeout(() => {
-        app.quit()
-    }, 3000)
+    app.quit()
 } else {
     app.on('second-instance', () => {
         if (mainWindow) {
