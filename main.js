@@ -534,14 +534,12 @@ function createRightClickMenu () {
 function ifSaveXYWH () {
     const flagXYWH = store.get('Appearance.SaveXYWH.isSave');
     if (flagXYWH) {
-        if (mainWindow) {
-            let mainsize = mainWindow.getSize()
-            let mainpos = mainWindow.getPosition()
-            store.set('Appearance.SaveXYWH.W', mainsize[0])
-            store.set('Appearance.SaveXYWH.H', mainsize[1])
-            store.set('Appearance.SaveXYWH.X', mainpos[0])
-            store.set('Appearance.SaveXYWH.Y', mainpos[1])
-        }
+        let mainsize = mainWindow.getSize()
+        let mainpos = mainWindow.getPosition()
+        store.set('Appearance.SaveXYWH.W', mainsize[0])
+        store.set('Appearance.SaveXYWH.H', mainsize[1])
+        store.set('Appearance.SaveXYWH.X', mainpos[0])
+        store.set('Appearance.SaveXYWH.Y', mainpos[1])
     }
     else {
         store.set('Appearance.SaveXYWH.W', store.get('Preferences.Appearance.SaveXYWH.W'))
@@ -572,9 +570,11 @@ function changeFontSizeFrom (userFontSizeFrom) {
 }
 // 退出前操作
 function beforeExit () {
-    ifSaveXYWH()
     setIFOpenAtStart()
-    detach(mainWindow);
+    if (!mainWindow.isDestroyed()) { 
+        ifSaveXYWH()
+        detach(mainWindow);
+    }
     app.exit()
 }
 
