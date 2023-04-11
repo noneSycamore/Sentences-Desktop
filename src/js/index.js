@@ -50,7 +50,6 @@ function fetchHitokoto() {
     fetch(`https://v1.hitokoto.cn/${Types}`)
         .then(response => response.json())
         .then(data => {
-            console.log(Types)
             hitokoto_text.innerText = data.hitokoto
             if (data.from_who) {
                 hitokoto_from.innerText = data.from + ' · ' + data.from_who

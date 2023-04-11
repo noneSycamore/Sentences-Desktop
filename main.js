@@ -3,7 +3,21 @@ const path = require('path')
 const { webContents } = require('electron')
 const Store = require('electron-store');
 // const ioHook = require('iohook');
-const {attach, detach} = require("electron-addtodesktop");
+    // 注册系统快捷键
+    // ioHook.start(false);
+    // const winDid = ioHook.registerShortcut(
+    //     [3675, 32],
+    //     (keys) => {
+    //         mainWindow.minimize()
+    //     },
+    //     (keys) => {
+    //         mainWindow.restore()
+    //     },
+    // );
+    // 卸载iohook监听
+    // ioHook.unload();
+// ioHook.stop();
+const { attach, detach } = require("electron-addtodesktop");
 Store.initRenderer()
 const store = new Store();
 const appPath = app.isPackaged ? process.execPath : app.getAppPath();
@@ -14,14 +28,34 @@ let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, 
 let mainWindow = null
 let childWin = null
 let tray = null
+// 单例模式
+const isFirstInstance = app.requestSingleInstanceLock()
+
+if (!isFirstInstance) {
+    setTimeout(() => {
+        app.quit()
+    }, 3000)
+} else {
+    app.on('second-instance', () => {
+        if (mainWindow) {
+            mainWindow.focus()
+        }
+    })
+}
 
 app.whenReady().then(() => {
     init()
     createMainWindow()
 })
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin')
+    if (process.platform !== 'darwin') {
+        beforeExit()
         app.quit()
+    }
+})
+app.on('before-quit', (event) => {
+    event.preventDefault()
+    beforeExit()
 })
 //////////////////////////////////////////////////////////
 //                      首选项设置保存                    //
@@ -58,6 +92,7 @@ function createMainWindow () {
     }
     // 主窗口
     mainWindow = new BrowserWindow({
+        // useContentSize: true,
         width: userW,
         height: userH,
         minWidth: 350,
@@ -95,20 +130,10 @@ function setMainWindow () {
         }
         mainWindow.show()
     })
+
 }
 // 显示时开启监听
 function openListenerWhenShow () {
-    // 注册系统快捷键
-    // ioHook.start(false);
-    // const winDid = ioHook.registerShortcut(
-    //     [3675, 32],
-    //     (keys) => {
-    //         mainWindow.minimize()
-    //     },
-    //     (keys) => {
-    //         mainWindow.restore()
-    //     },
-    // );
     // 主窗口大小改变事件
     mainWindow.on('resized', () => {
         mainWindow.webContents.send('send-H', 'WH')
@@ -511,18 +536,20 @@ function createRightClickMenu () {
 function ifSaveXYWH () {
     const flagXYWH = store.get('Appearance.SaveXYWH.isSave');
     if (flagXYWH) {
-        let mainsize = mainWindow.getSize()
-        let mainpos = mainWindow.getPosition()
-        store.set('Appearance.SaveXYWH.W', mainsize[0])
-        store.set('Appearance.SaveXYWH.H', mainsize[1])
-        store.set('Appearance.SaveXYWH.X', mainpos[0])
-        store.set('Appearance.SaveXYWH.Y', mainpos[1])
+        if (mainWindow) {
+            let mainsize = mainWindow.getSize()
+            let mainpos = mainWindow.getPosition()
+            store.set('Appearance.SaveXYWH.W', mainsize[0])
+            store.set('Appearance.SaveXYWH.H', mainsize[1])
+            store.set('Appearance.SaveXYWH.X', mainpos[0])
+            store.set('Appearance.SaveXYWH.Y', mainpos[1])
+        }
     }
     else {
-        store.set('Appearance.SaveXYWH.W', store.get('Preferences.Appearance.SaveXYWH.defaultW'))
-        store.set('Appearance.SaveXYWH.H', store.get('Preferences.Appearance.SaveXYWH.defaultH'))
-        store.set('Appearance.SaveXYWH.X', store.get('Preferences.Appearance.SaveXYWH.defaultX'))
-        store.set('Appearance.SaveXYWH.Y', store.get('Preferences.Appearance.SaveXYWH.defaultY'))
+        store.set('Appearance.SaveXYWH.W', store.get('Preferences.Appearance.SaveXYWH.W'))
+        store.set('Appearance.SaveXYWH.H', store.get('Preferences.Appearance.SaveXYWH.H'))
+        store.set('Appearance.SaveXYWH.X', store.get('Preferences.Appearance.SaveXYWH.X'))
+        store.set('Appearance.SaveXYWH.Y', store.get('Preferences.Appearance.SaveXYWH.Y'))
     }
 }
 // 更改主窗口透明度
@@ -549,9 +576,6 @@ function changeFontSizeFrom (userFontSizeFrom) {
 function beforeExit () {
     ifSaveXYWH()
     setIFOpenAtStart()
-    // 卸载iohook监听
-    // ioHook.unload();
-    // ioHook.stop();
     detach(mainWindow);
     app.exit()
 }
