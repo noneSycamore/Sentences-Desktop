@@ -626,7 +626,7 @@ function init () {
     if (!store.has('RightClick')) {
         store.set('RightClick', store.get('Preferences.RightClick'))
     }
-    iconPath = path.join(__dirname, '/src/icons/hitokoto.ico');
+    iconPath = path.join(__dirname, '/src/icons/icon.ico');
     setIFOpenAtStart()
 
 }
