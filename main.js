@@ -1,22 +1,6 @@
-const { app, BrowserWindow, ipcMain, screen, Menu, Tray } = require('electron')
+const { app, BrowserWindow, webContents, ipcMain, screen, Menu, Tray } = require('electron')
 const path = require('path')
-const { webContents } = require('electron')
 const Store = require('electron-store');
-// const ioHook = require('iohook');
-    // 注册系统快捷键
-    // ioHook.start(false);
-    // const winDid = ioHook.registerShortcut(
-    //     [3675, 32],
-    //     (keys) => {
-    //         mainWindow.minimize()
-    //     },
-    //     (keys) => {
-    //         mainWindow.restore()
-    //     },
-    // );
-    // 卸载iohook监听
-    // ioHook.unload();
-// ioHook.stop();
 const { attach, detach } = require("electron-addtodesktop");
 Store.initRenderer()
 const store = new Store();

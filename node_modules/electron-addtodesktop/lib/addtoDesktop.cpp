@@ -2,6 +2,8 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <windows.h>
+#define WM_CLOSE 0x0010
+
 // 声明重载EnumWindows回调函数EnumWindowsProc
 extern BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 // 声明一个结构体用于存储获取到的所有窗口类名
@@ -42,11 +44,16 @@ Napi::Value Attach(const Napi::CallbackInfo &info)
     Napi::Env env = info.Env();
     Napi::Buffer<void *> wndHandle = info[0].As<Napi::Buffer<void *>>();
     HWND win = static_cast<HWND>(*reinterpret_cast<void **>(wndHandle.Data()));
+    if (win == NULL)
+    {
+        Napi::TypeError::New(env, "couldn't locate the window you provide").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
     // 记录要插入的窗口
     HWND insert_hWnd = NULL;
 
-    // 获取窗口句柄
+    // 获取Progman窗口句柄
     HWND hWnd = FindWindow(_T("Progman"), _T("Program Manager"));
     if (hWnd == NULL)
     {
@@ -57,57 +64,34 @@ Napi::Value Attach(const Napi::CallbackInfo &info)
     SendMessage(hWnd, 0x052c, 0, 0);
     // 结构体初始化
     class_name = (windows_class *)malloc(sizeof(windows_class));
+    // WorkerW的子窗口
+    HWND childWindow_hwnd = NULL;
     // 枚举屏幕上所有窗口
     EnumWindows(EnumWindowsProc, 0);
-    // 循环比对找到->WorkerW类
+    // 循环比对找到->WorkerW类, 获取要嵌入窗口的句柄
     for (int i = 0; i < num; ++i)
     {
         if (strncmp(class_name->window_class_name, "WorkerW", strlen(class_name->window_class_name)) == 0)
         { // 以有效字符比对，防止连同字符“0”等无效字符也一同包含在一起比对
-            HWND childWindow_hwnd = FindWindowExA(class_name->win_hwnd, 0, "SHELLDLL_DefView", NULL);
-            if (childWindow_hwnd == NULL)
-            {
-                SendMessage(class_name->win_hwnd, 16, 0, 0);
-                if (insert_hWnd != NULL) // 如果insert_hWnd不为空，break
-                {
-                    break;
-                }
-            }
-            else
+            childWindow_hwnd = FindWindowExA(class_name->win_hwnd, 0, "SHELLDLL_DefView", NULL);
+            if (childWindow_hwnd != NULL)
             {
                 insert_hWnd = class_name->win_hwnd;
-                // 获取成功看一下下一个窗口是不是Progman
-                class_name = class_name->next;
-                if (class_name->window_class_name == "Progman")
+                char wname[256];
+                GetClassNameA(childWindow_hwnd, wname, sizeof(wname));
+                if (strncmp(wname, "SHELLDLL_DefView", strlen(wname)) != 0)
                 {
-                    HWND childWindow_hwnd = FindWindowExA(class_name->win_hwnd, 0, "WorkerW", NULL); // 获取图标下面的WorkerW子窗口
-                    if (childWindow_hwnd == NULL)
-                    { // 获取不到代表该窗口已经被关闭了
-                        break;
-                    }
-                    else
-                    {
-                        SendMessage(childWindow_hwnd, 16, 0, 0);
-                    }
+                    Napi::TypeError::New(env, "Child Class Name is not SHELLDLL_DefView").ThrowAsJavaScriptException();
+                    return env.Null();
                 }
-                else
-                {
-                    SendMessage(class_name->win_hwnd, 16, 0, 0);
-                }
+                break;
             }
         }
         class_name = class_name->next;
     }
-    // 获取要嵌入窗口的句柄
-    if (win == NULL)
-    {
-        Napi::TypeError::New(env, "couldn't locate the window you provide").ThrowAsJavaScriptException();
-        return env.Null();
-    }
-    else
-    {
-        SetParent(win, insert_hWnd);
-    }
+    // 设置父窗口
+    SetParent(win, insert_hWnd);
+
     return Napi::Boolean::New(env, true);
 }
 
@@ -118,7 +102,7 @@ Napi::Value Detach(const Napi::CallbackInfo &info)
     Napi::Buffer<void *> wndHandle = info[0].As<Napi::Buffer<void *>>();
     HWND win = static_cast<HWND>(*reinterpret_cast<void **>(wndHandle.Data()));
 
-    SetParent(win, 0);
+    SetParent(win, NULL);
 
     return Napi::Boolean::New(env, true);
 }
