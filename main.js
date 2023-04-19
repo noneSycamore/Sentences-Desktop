@@ -10,6 +10,7 @@ const WM_INITMENU = 0x0116;
 // 初始化
 let DefaultRightClickData = { a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: true, j: false, k: false, l: false, }                  
 let mainWindow = null
+// let ma nageWindow = null
 let childWin = null
 let tray = null
 // 单例模式
@@ -28,6 +29,7 @@ if (!isFirstInstance) {
 app.whenReady().then(() => {
     init()
     createMainWindow()
+    // createManageWindow()
 })
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -145,6 +147,55 @@ function openListenerWhenShow () {
         }
     })
 }
+// // 创建桌面管理窗口
+// function createManageWindow () {
+//     if (manageWindow) {
+//         return
+//     }
+//     // 主窗口
+//     manageWindow = new BrowserWindow({
+//         // useContentSize: true,
+//         width: 400,
+//         height: 600,
+//         minWidth: 200,
+//         minHeight: 200,
+//         x: 10,
+//         y: 10,
+//         frame: false,
+//         transparent: true,
+//         show: false,
+//         maximizable: false,
+//         skipTaskbar: true,
+//         useContentSize: true,
+//         webPreferences: {
+//             // devTools: false,
+//             nodeIntegration: true,
+//             enableRemoteModule: true,
+//             contextIsolation: false,
+//         }
+//     })
+//     attach(manageWindow);
+//     manageWindow.loadFile('./src/manage.html');
+//     setManageWindow()
+// }
+// function setManageWindow () {
+//     manageWindow.setIgnoreMouseEvents(false);
+//     manageWindow.setFullScreenable(false);
+//     // 管理窗口准备好后显示
+//     manageWindow.once('ready-to-show', () => {
+//         openListenerWhenManage()
+//         manageWindow.show()
+//     })
+
+// }
+// // 管理窗口显示时开启监听
+// function openListenerWhenManage () {
+//     // 右键菜单设置
+//     manageWindow.hookWindowMessage(WM_INITMENU, () => {
+//         manageWindow.setEnabled(false);
+//         manageWindow.setEnabled(true);
+//     });
+// }
 // 设置窗口
 function createSetting () {
     if (childWin) {
