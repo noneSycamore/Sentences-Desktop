@@ -14,6 +14,10 @@ const fontSizeText = document.getElementById('FontSizeText')
 const fontSizeFrom = document.getElementById('FontSizeFrom')
 const btnMinimize = document.getElementById('btn-minimize')
 const btnOpenAtStart = document.getElementById('btn-openAtStart')
+const btnAPI = document.getElementById('btn-customizationAPI')
+const inAPIHttps = document.getElementById('api-https')
+const inAPIJs = document.getElementById('api-js')
+const APIManage = document.querySelectorAll('.api-manage')
 
 const Store = require('electron-store');
 const store = new Store();
@@ -43,6 +47,10 @@ const store = new Store();
 //  Other                                               //
 //  -ifMinimize                                         //
 //  -ifOpenAtStart                                      //
+//  -ifCustomizationAPI
+//  --isAPI
+//  --https
+//  --js
 //////////////////////////////////////////////////////////
 
 //初始化显示窗口
@@ -52,6 +60,7 @@ initCurvature()
 initIfFontSize()
 initIfMinimize()
 initIfOpenAtStart()
+initIfCustomizationAPI()
 
 //绑定事件
 tabManage.forEach((el,index) => {
@@ -64,6 +73,7 @@ el.addEventListener('click', () => {
 //监听关闭按钮
 closeDom.addEventListener('click', () => {
     ipcRenderer.send('setting:close')
+    beforeSettingClose()
 })
 
 //////////////////////////////////////////////////////////
@@ -183,6 +193,28 @@ function initIfOpenAtStart () {
         btnOffOpenAtStart()
     }
 }
+// 初始化 - 自定义一言API - CustomizationAPI
+function initIfCustomizationAPI () { 
+    var isSetSize = store.get('Other.ifCustomizationAPI.isAPI')
+    if (isSetSize) {
+        btnOnAPI()
+    }
+    else {
+        btnOffAPI()
+    }
+}
+
+// 初始化 - 自定义一言API - 链接
+function initAPIHttps () {
+    var apiHttps = store.get('Other.ifCustomizationAPI.https')
+    inAPIHttps.value = apiHttps
+}
+
+// 初始化 - 自定义一言API - js内容
+function initAPIJs () {
+    var apiJs = store.get('Other.ifCustomizationAPI.js')
+    inAPIJs.value = apiJs
+}
 //////////////////////////////////////////////////////////
 //                      组件触发事件                      //
 //////////////////////////////////////////////////////////
@@ -273,6 +305,32 @@ function on_off_OpenAtStart(){
         btnOnOpenAtStart()
     }
 }
+// 滑动按钮控制 - CustomizationAPI
+function on_off_CustomizationAPI () {
+    var text = btnAPI.children[1];
+    if(text.innerText==="ON"){
+        btnOffAPI()
+    } else {
+        btnOnAPI()
+    }
+    // 发送变动数据
+    ipcRenderer.send('btn-changed-API')
+}
+
+// 输入框选中
+function add_API (item) {
+    item.parentNode.classList.add("active");
+}
+// 输入框未选中
+function remove_API (item) {
+    item.parentNode.classList.remove("active");
+    if (item.id === 'api-https') {
+        store.set("Other.ifCustomizationAPI.https", item.value)
+    }
+    else if (item.id === 'api-js') {
+        store.set("Other.ifCustomizationAPI.js", item.value)
+    }
+}
 //////////////////////////////////////////////////////////
 //                  按钮组件状态调整函数                   //
 //////////////////////////////////////////////////////////
@@ -343,6 +401,27 @@ function btnOffOpenAtStart () {
     // 数据存储
     store.set('Other.ifOpenAtStart', false);
 }
+// 滑动按钮打开 - CustomizationAPI
+function btnOnAPI () {
+    showAPIInput()
+    btnOn(btnAPI)
+    // 数据存储
+    store.set('Other.ifCustomizationAPI.isAPI', true);
+    // 开启内容显示
+    APIManage.forEach((taskEl) => {
+        taskEl.classList.add('api-active')
+    })
+}
+// 滑动按钮关闭 - CustomizationAPI
+function btnOffAPI () {
+    btnOff(btnAPI)
+    // 数据存储
+    store.set('Other.ifCustomizationAPI.isAPI', false);
+    // 关闭内容显示
+    APIManage.forEach((taskEl) => {
+        taskEl.classList.remove('api-active')
+    })
+}
 
 // 显示窗口数据 - XYWH
 function showXYWH () {
@@ -363,4 +442,16 @@ function showFontSize () {
     initFontSizeTitle()
     initFontSizeText()
     initFontSizeFrom()
+}
+
+// 显示自定义API输入框
+function showAPIInput () {
+    initAPIHttps()
+    initAPIJs()
+}
+
+// 设置窗口关闭前执行
+function beforeSettingClose () {
+    store.set("Other.ifCustomizationAPI.https", inAPIHttps.value)
+    store.set("Other.ifCustomizationAPI.js", inAPIJs.value)
 }

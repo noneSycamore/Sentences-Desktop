@@ -62,13 +62,6 @@ button:hover::after {
     border-left-color: ivory;
     transition: border-color 0s ease-out 0.6s, width 0.3s ease-out 0.6s, height 0.3s ease-out 1s;
 }
-/* .header{
-    position: absolute;
-    top: 0;
-    width: 1px;
-    height: 1px;
-    -webkit-app-region: no-drag;
-} */
 
 .titlebar {
     -webkit-user-select: none;

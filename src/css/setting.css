@@ -16,6 +16,72 @@ body {
     overflow: hidden;
 }
 
+textarea {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    outline: none;
+    resize: none;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #333333;
+    border-radius: 10px;
+    border-width: 2px;
+    border-top-color: #131313;
+    border-left-color: #131313;
+    font-size: 20px;
+    color: #f8f8f8;
+}
+
+textarea::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+label {
+    position: relative;
+    width: 400px;
+    display: inline-block;
+}
+
+label:after {
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 2px;
+    background: #31c27c;
+    transition: width 1s;
+    position: absolute;
+    bottom: 1px;
+    left: 8px;
+}
+.active:after {
+    width: calc(100% - 8px)
+}
+
+.api-input {
+    width: 100%;
+    height: 40px;
+    background-color: #333333;
+    border-radius: 10px;
+    border-top-color: #131313;
+    border-left-color: #131313;
+    outline: none;
+    font-size: 20px;
+    text-indent: 10px;
+    color: #f8f8f8;
+}
+
+.api-input.horizontal-scroll {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
 
 .enable-click {
     -webkit-app-region: no-drag;
@@ -171,6 +237,26 @@ body {
 }
 /* 子块激活 */
 .fontSize-active {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 设置子块样式 - api */
+.api-manage {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 10px;
+    margin-bottom: 1px;
+    border-radius: 5px;
+    display: none;
+    background-color: #424242;
+    color: #f8f8f8;
+}
+
+/* 子块激活 */
+.api-active {
     display: flex;
     justify-content: space-between;
     align-items: center;

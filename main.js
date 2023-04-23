@@ -89,13 +89,13 @@ function createMainWindow () {
         maximizable: false,
         skipTaskbar: true,
         webPreferences: {
-            devTools: false,
+            // devTools: false,
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
         }
     })
-    attach(mainWindow);
+    // attach(mainWindow);
     mainWindow.loadFile('./src/index.html');
     setMainWindow()
 }
@@ -600,11 +600,11 @@ function changeFontSizeTitle (userFontSizeTitle) {
 }
 // 更改一言文字大小
 function changeFontSizeText (userFontSizeText) {
-    mainWindow.webContents.executeJavaScript(`hitokoto_text.style.fontSize = "${userFontSizeText}px";`)
+    mainWindow.webContents.executeJavaScript(`content.style.fontSize = "${userFontSizeText}px";`)
 }
 // 更改来源文字大小
 function changeFontSizeFrom (userFontSizeFrom) {
-    mainWindow.webContents.executeJavaScript(`hitokoto_from.style.fontSize = "${userFontSizeFrom}px";`)
+    mainWindow.webContents.executeJavaScript(`from.style.fontSize = "${userFontSizeFrom}px";`)
 }
 // 退出前操作
 function beforeExit () {
@@ -658,6 +658,11 @@ function init () {
     if (!store.has('Other.ifOpenAtStart')) {
         store.set('Other.ifOpenAtStart', store.get('Preferences.Other.ifOpenAtStart'))
     }
+    if (!store.has('Other.ifCustomizationAPI.isAPI')) {
+        store.set('Other.ifCustomizationAPI.isAPI', store.get('Preferences.Other.ifCustomizationAPI.isAPI'))
+        store.set('Other.ifCustomizationAPI.https', store.get('Preferences.Other.ifCustomizationAPI.https'))
+        store.set('Other.ifCustomizationAPI.js', store.get('Preferences.Other.ifCustomizationAPI.js'))
+    }
     if (!store.has('RightClick')) {
         store.set('RightClick', store.get('Preferences.RightClick'))
     }
@@ -692,11 +697,17 @@ function loadPreferences () {
         store.set('Preferences.Appearance.FontSize.fontSizeFrom.value', 18)
         store.set('Preferences.Appearance.FontSize.fontSizeFrom.percent', 20)
     }
-    if (!store.has('Other.ifMinimize')) {
+    if (!store.has('Preferences.Other.ifMinimize')) {
         store.set('Preferences.Other.ifMinimize', false)
     }
-    if (!store.has('Other.ifOpenAtStart')) {
+    if (!store.has('Preferences.Other.ifOpenAtStart')) {
         store.set('Preferences.Other.ifOpenAtStart', true)
+    }
+    if (!store.has('Preferences.Other.ifCustomizationAPI.isAPI')) {
+        store.set('Preferences.Other.ifCustomizationAPI.isAPI', true)
+        store.set('Preferences.Other.ifCustomizationAPI.https', "https://v1.hitokoto.cn/${Types}")
+        store.set('Preferences.Other.ifCustomizationAPI.js', `content.innerText = data.hitokoto;
+from.innerText =  data.from + (data.from_who ? ' · ' + data.from_who : '');`)
     }
     if (!store.has('RightClick')) {
         store.set('Preferences.RightClick', DefaultRightClickData)

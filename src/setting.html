@@ -115,10 +115,22 @@
                     开机自启动
                     <div id="btn-openAtStart" class="btn enable-click" onclick="on_off_OpenAtStart()"></div>
                 </div>
-                <!-- <div class="setting-item">
+                <div class="setting-item">
                     自定义一言API
                     <div id="btn-customizationAPI" class="btn enable-click" onclick="on_off_CustomizationAPI()"></div>
-                </div> -->
+                </div>
+                <div class="api-manage">
+                    API链接
+                    <label>
+                        <input id="api-https" class="api-input horizontal-scroll enable-click" type="text" onfocus="add_API(this)" onblur="remove_API(this)">
+                    </label>
+                </div>
+                <div class="api-manage">
+                    内容和来源（JS）
+                    <label>
+                        <textarea id="api-js" class="enable-click" onfocus="add_API(this)" onblur="remove_API(this)"></textarea>
+                    </label>
+                </div>
             </ul>
         </div>
         <div class="content-manage">

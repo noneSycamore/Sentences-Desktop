@@ -3,8 +3,8 @@ const settingBtn = document.getElementById('setting')
 const nextBtn = document.getElementById('next')
 const allItems = document.getElementById('app')
 const title_text = document.getElementById('title_text')
-const hitokoto_text = document.getElementById('hitokoto_text')
-const hitokoto_from = document.getElementById('hitokoto_from')
+const content = document.getElementById('hitokoto_text')
+const from = document.getElementById('hitokoto_from')
 
 const Store = require('electron-store');
 const store = new Store();
@@ -34,7 +34,7 @@ ipcRenderer.on('send-H', (event, arg) => {
     }
 })
 
-function fetchHitokoto() {
+function fetchHitokoto () {
     const data = { data: "fetch" };
     var RightClickData = store.get('RightClick')
     var Types = ''
@@ -47,16 +47,17 @@ function fetchHitokoto() {
         Types = '?' + Types.slice(0,-1)
     }
 
-    fetch(`https://v1.hitokoto.cn/${Types}`)
+    eval("fetch(`" + store.get('Other.ifCustomizationAPI.https') + "`)")
+    // fetch(`https://v1.hitokoto.cn/${Types}`)
+    // fetch(`https://v2.jinrishici.com/sentence`)
         .then(response => response.json())
         .then(data => {
-            hitokoto_text.innerText = data.hitokoto
-            if (data.from_who) {
-                hitokoto_from.innerText = data.from + ' · ' + data.from_who
-            }
-            else {
-                hitokoto_from.innerText = data.from
-            }
+            eval(store.get('Other.ifCustomizationAPI.js'))
+            // content.innerText = data.hitokoto
+            // from.innerText =  data.from + (data.from_who ? ' · ' + data.from_who : '')
+            
+            // content.innerText = data.data.content
+            // from.innerText = '《' + data.data.origin.title + '》 ' + data.data.origin.dynasty + ' · ' + data.data.origin.author
             ipcRenderer.send('change-H', [allItems.offsetHeight+4, 'onlyH'])
         })
         .catch(console.error)
