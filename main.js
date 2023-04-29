@@ -89,13 +89,13 @@ function createMainWindow () {
         maximizable: false,
         skipTaskbar: true,
         webPreferences: {
-            // devTools: false,
+            devTools: false,
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
         }
     })
-    // attach(mainWindow);
+    attach(mainWindow);
     mainWindow.loadFile('./src/index.html');
     setMainWindow()
 }
