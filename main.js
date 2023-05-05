@@ -2,6 +2,7 @@ const { app, BrowserWindow, webContents, ipcMain, screen, Menu, Tray } = require
 const path = require('path')
 const Store = require('electron-store');
 const { attach, detach } = require("electron-addtodesktop");
+const { config } = require('process');
 Store.initRenderer()
 const store = new Store();
 const appPath = app.isPackaged ? process.execPath : app.getAppPath();
@@ -69,6 +70,7 @@ app.on('before-quit', (event) => {
 //  --ifMinimize                                        //
 //  --iFOpenAtStart                                     //
 //  -RightClick                                         //
+//  -LastData                                           //
 //////////////////////////////////////////////////////////
 function createMainWindow () {
     if (mainWindow) {
@@ -104,11 +106,6 @@ function setMainWindow () {
     mainWindow.setFullScreenable(false);
     // 主窗口准备好后显示
     mainWindow.once('ready-to-show', () => {
-        changeTransparency(userTransparency)
-        changeCurvature(userCurvature)
-        changeFontSizeTitle(userFontSizeTitle)
-        changeFontSizeText(userFontSizeText)
-        changeFontSizeFrom(userFontSizeFrom)
         openListenerWhenShow()
         if (store.get('Other.ifMinimize')) {
             createTray()
@@ -147,55 +144,7 @@ function openListenerWhenShow () {
         }
     })
 }
-// // 创建桌面管理窗口
-// function createManageWindow () {
-//     if (manageWindow) {
-//         return
-//     }
-//     // 主窗口
-//     manageWindow = new BrowserWindow({
-//         // useContentSize: true,
-//         width: 400,
-//         height: 600,
-//         minWidth: 200,
-//         minHeight: 200,
-//         x: 10,
-//         y: 10,
-//         frame: false,
-//         transparent: true,
-//         show: false,
-//         maximizable: false,
-//         skipTaskbar: true,
-//         useContentSize: true,
-//         webPreferences: {
-//             // devTools: false,
-//             nodeIntegration: true,
-//             enableRemoteModule: true,
-//             contextIsolation: false,
-//         }
-//     })
-//     attach(manageWindow);
-//     manageWindow.loadFile('./src/manage.html');
-//     setManageWindow()
-// }
-// function setManageWindow () {
-//     manageWindow.setIgnoreMouseEvents(false);
-//     manageWindow.setFullScreenable(false);
-//     // 管理窗口准备好后显示
-//     manageWindow.once('ready-to-show', () => {
-//         openListenerWhenManage()
-//         manageWindow.show()
-//     })
 
-// }
-// // 管理窗口显示时开启监听
-// function openListenerWhenManage () {
-//     // 右键菜单设置
-//     manageWindow.hookWindowMessage(WM_INITMENU, () => {
-//         manageWindow.setEnabled(false);
-//         manageWindow.setEnabled(true);
-//     });
-// }
 // 设置窗口
 function createSetting () {
     if (childWin) {
@@ -608,8 +557,9 @@ function changeFontSizeFrom (userFontSizeFrom) {
 }
 // 退出前操作
 function beforeExit () {
-    setIFOpenAtStart()
+    saveLastData()
     if (!mainWindow.isDestroyed()) { 
+        setIFOpenAtStart()
         ifSaveXYWH()
         detach(mainWindow);
     }
@@ -634,12 +584,10 @@ function init () {
         store.set('Appearance.Transparency.value', store.get('Preferences.Appearance.Transparency.value'))
         store.set('Appearance.Transparency.percent', store.get('Preferences.Appearance.Transparency.percent'))
     }
-    userTransparency = store.get('Appearance.Transparency.value') / 100
     if (!store.has('Appearance.Curvature.value')) {
         store.set('Appearance.Curvature.value', store.get('Preferences.Appearance.Curvature.value'))
         store.set('Appearance.Curvature.percent', store.get('Preferences.Appearance.Curvature.percent'))
     }
-    userCurvature = store.get('Appearance.Curvature.value') * 6
     if (!store.has('Appearance.FontSize.isSetSize')) {
         store.set('Appearance.FontSize.isSetSize', store.get('Preferences.Appearance.FontSize.isSetSize'))
         store.set('Appearance.FontSize.fontSizeTitle.value', store.get('Preferences.Appearance.FontSize.fontSizeTitle.value'))
@@ -649,9 +597,6 @@ function init () {
         store.set('Appearance.FontSize.fontSizeFrom.value', store.get('Preferences.Appearance.FontSize.fontSizeFrom.value'))
         store.set('Appearance.FontSize.fontSizeFrom.percent', store.get('Preferences.Appearance.FontSize.fontSizeFrom.percent'))
     }
-    userFontSizeTitle = store.get('Appearance.FontSize.fontSizeTitle.value')
-    userFontSizeText = store.get('Appearance.FontSize.fontSizeText.value')
-    userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
     if (!store.has('Other.ifMinimize')) {
         store.set('Other.ifMinimize', store.get('Preferences.Other.ifMinimize'))
     }
@@ -665,6 +610,10 @@ function init () {
     }
     if (!store.has('RightClick')) {
         store.set('RightClick', store.get('Preferences.RightClick'))
+    }
+    if (!store.has('LastData.text')) {
+        store.set('LastData.text', store.get('Preferences.LastData.text'))
+        store.set('LastData.from', store.get('Preferences.LastData.from'))
     }
     iconPath = path.join(__dirname, '/src/icons/icon.ico');
     setIFOpenAtStart()
@@ -709,8 +658,12 @@ function loadPreferences () {
         store.set('Preferences.Other.ifCustomizationAPI.js', `content.innerText = data.hitokoto;
 from.innerText =  data.from + (data.from_who ? ' · ' + data.from_who : '');`)
     }
-    if (!store.has('RightClick')) {
+    if (!store.has('Preferences.RightClick')) {
         store.set('Preferences.RightClick', DefaultRightClickData)
+    }
+    if (!store.has('Preferences.LastData.text')) {
+        store.set('Preferences.LastData.text', '醉后不知天在水，满船清梦压星河。')
+        store.set('Preferences.LastData.from', '题龙阳县青草湖 · 唐温如')
     }
 }
 //设置是否开机启动
@@ -721,3 +674,7 @@ function setIFOpenAtStart () {
     });
 }
 
+function saveLastData () {
+    mainWindow.webContents.executeJavaScript(`store.set('LastData.text', content.innerText)`)
+    mainWindow.webContents.executeJavaScript(`store.set('LastData.from', from.innerText)`)
+}

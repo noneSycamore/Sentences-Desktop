@@ -17,7 +17,7 @@ button {
     border: 0;
     background: none;
     text-transform: uppercase;
-    color: ivory;
+    color: var(--color);
     font-weight: bold;
     position: relative;
     outline: none;
@@ -52,14 +52,14 @@ button:hover::after {
 }
 
 button:hover::before {
-    border-top-color: ivory;
-    border-right-color: ivory;
+    border-top-color: var(--color);
+    border-right-color: var(--color);
     transition: width 0.3s ease-out, height 0.3s ease-out 0.3s;
 }
 
 button:hover::after {
-    border-bottom-color: ivory;
-    border-left-color: ivory;
+    border-bottom-color: var(--color);
+    border-left-color: var(--color);
     transition: border-color 0s ease-out 0.6s, width 0.3s ease-out 0.6s, height 0.3s ease-out 1s;
 }
 

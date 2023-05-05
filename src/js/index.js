@@ -9,7 +9,21 @@ const from = document.getElementById('hitokoto_from')
 const Store = require('electron-store');
 const store = new Store();
 
+// init
+content.innerText = store.get('LastData.text')
+from.innerText = store.get('LastData.from')
 fetchHitokoto()
+userTransparency = store.get('Appearance.Transparency.value') / 100
+allItems.style.backgroundColor = `rgba(0, 0, 0, ${userTransparency})`
+userCurvature = store.get('Appearance.Curvature.value') * 6
+allItems.style.borderRadius = `${userCurvature}px`;
+userFontSizeTitle = store.get('Appearance.FontSize.fontSizeTitle.value')
+userFontSizeText = store.get('Appearance.FontSize.fontSizeText.value')
+userFontSizeFrom = store.get('Appearance.FontSize.fontSizeFrom.value')
+content.style.fontSize = `${userFontSizeText}px`;
+from.style.fontSize = `${userFontSizeFrom}px`;
+title_text.style.fontSize = `${userFontSizeTitle}px`;
+document.body.style.setProperty('--color', 'ivory');
 
 settingBtn.addEventListener('click', () => {
     ipcRenderer.send('openSetting')
@@ -52,6 +66,7 @@ function fetchHitokoto () {
     // fetch(`https://v2.jinrishici.com/sentence`)
         .then(response => response.json())
         .then(data => {
+            document.body.style.setProperty('--color', 'ivory');
             eval(store.get('Other.ifCustomizationAPI.js'))
             // content.innerText = data.hitokoto
             // from.innerText =  data.from + (data.from_who ? ' · ' + data.from_who : '')
@@ -60,5 +75,5 @@ function fetchHitokoto () {
             // from.innerText = '《' + data.data.origin.title + '》 ' + data.data.origin.dynasty + ' · ' + data.data.origin.author
             ipcRenderer.send('change-H', [allItems.offsetHeight+4, 'onlyH'])
         })
-        .catch(console.error)
+        .catch(error => document.body.style.setProperty('--color', '#c95862'))
 }
