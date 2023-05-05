@@ -6,10 +6,12 @@ Based on the Api provided by [Hitokoto](https://hitokoto.cn/), I made a desktop 
 
 ![main](/md/main.png)
 
-![setting](/md/setting.png)
-（设置图片未更新）
+![setting1](/md/setting1.png)
 
-**Possible future features**
+![setting2](/md/setting2.png)
 
-1. 窗口嵌入桌面
-2. 桌面图标管理
+---
+
+## update
+
+It is now possible to use other APIs with a certain degree of customization
