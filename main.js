@@ -557,7 +557,6 @@ function changeFontSizeFrom (userFontSizeFrom) {
 }
 // 退出前操作
 function beforeExit () {
-    saveLastData()
     if (!mainWindow.isDestroyed()) { 
         setIFOpenAtStart()
         ifSaveXYWH()
@@ -672,9 +671,4 @@ function setIFOpenAtStart () {
         openAtLogin: store.get('Other.ifOpenAtStart'),
         path:appPath,
     });
-}
-
-function saveLastData () {
-    mainWindow.webContents.executeJavaScript(`store.set('LastData.text', content.innerText)`)
-    mainWindow.webContents.executeJavaScript(`store.set('LastData.from', from.innerText)`)
 }

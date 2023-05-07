@@ -73,7 +73,9 @@ function fetchHitokoto () {
             
             // content.innerText = data.data.content
             // from.innerText = '《' + data.data.origin.title + '》 ' + data.data.origin.dynasty + ' · ' + data.data.origin.author
-            ipcRenderer.send('change-H', [allItems.offsetHeight+4, 'onlyH'])
+            ipcRenderer.send('change-H', [allItems.offsetHeight + 4, 'onlyH'])
+            store.set('LastData.text', content.innerText)
+            store.set('LastData.from', from.innerText)
         })
         .catch(error => document.body.style.setProperty('--color', '#c95862'))
 }
