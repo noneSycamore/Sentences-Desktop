@@ -1,8 +1,9 @@
 # Sentences-Desktop
 
+Project address: https://github.com/noneSycamore/Sentences-Desktop
 [practice work]
 
-Based on the Api provided by [Hitokoto](https://hitokoto.cn/), I made a desktop application with electron：
+Based on the Api provided by [Hitokoto](https://hitokoto.cn/), I made a desktop application with electron：(Only on Windows)
 
 ![main](/md/main.png)
 
